@@ -124,7 +124,9 @@ function App() {
       name,
       months: months.map(({ date }) => ({
         date,
-        items: items.filter(({ target }) => sameMonth(date, target)),
+        items: items.filter(
+          ({ type, target }) => name === type && sameMonth(date, target)
+        ),
       })),
     }));
   }, [months]); // data never changes, yet
@@ -160,16 +162,16 @@ function App() {
       setOffset(0);
     };
 
-    addEventListener('touchstart', onTouchStart);
-    addEventListener('touchmove', onTouchMove);
-    addEventListener('touchend', onTouchEnd);
-    addEventListener('touchcancel', onTouchCancel);
+    addEventListener("touchstart", onTouchStart);
+    addEventListener("touchmove", onTouchMove);
+    addEventListener("touchend", onTouchEnd);
+    addEventListener("touchcancel", onTouchCancel);
 
     return () => {
-      removeEventListener('touchstart', onTouchStart);
-      removeEventListener('touchmove', onTouchMove);
-      removeEventListener('touchend', onTouchEnd);
-      removeEventListener('touchcancel', onTouchCancel);
+      removeEventListener("touchstart", onTouchStart);
+      removeEventListener("touchmove", onTouchMove);
+      removeEventListener("touchend", onTouchEnd);
+      removeEventListener("touchcancel", onTouchCancel);
     };
   }, [date]);
 
