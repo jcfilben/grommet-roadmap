@@ -69,15 +69,75 @@
       "status": "ok"
     },
     {
+      "name": "WCAG test",
+      "type": "Research",
+      "target": "2020-10-25",
+      "status": "ok"
+    },
+    {
+      "name": "Unmoderated usability study",
+      "type": "Research",
+      "target": "2020-10-25",
+      "status": "ok"
+    },
+    {
       "name": "Figma introduction",
       "type": "Training",
-      "target": "2020-08-25",
+      "target": "2020-06-25",
       "status": "ok"
     },
     {
       "name": "Designer sharing",
       "type": "Training",
       "target": "2020-07-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: Sharing",
+      "type": "Training",
+      "target": "2020-07-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: Backing up",
+      "type": "Training",
+      "target": "2020-07-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: Page layouts",
+      "type": "Training",
+      "target": "2020-08-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: Navigation",
+      "type": "Training",
+      "target": "2020-08-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: Data",
+      "type": "Training",
+      "target": "2020-09-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: DropButton",
+      "type": "Training",
+      "target": "2020-09-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: Templates",
+      "type": "Training",
+      "target": "2020-10-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: Code",
+      "type": "Training",
+      "target": "2020-10-25",
       "status": "ok"
     },
     {
