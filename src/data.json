@@ -12,7 +12,8 @@
       "name": "Tables",
       "type": "Templates",
       "target": "2020-08-25",
-      "status": "ok"
+      "status": "ok",
+      "url": "https://github.com/hpe-design/design-system/issues/800"
     },
     {
       "name": "Notifications",

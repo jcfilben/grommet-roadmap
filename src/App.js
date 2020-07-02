@@ -21,7 +21,7 @@ const App = () => {
     <Grommet full theme={theme} background="background-back">
       <Grid columns={["flex", ["small", "xlarge"], "flex"]}>
         <Box />
-        <Box margin={{ horizontal: "large" }}>
+        <Box margin={{ horizontal: "large", bottom: 'large' }}>
           <Box alignSelf="center">
             <Heading textAlign="center" size="small">
               {data.name}

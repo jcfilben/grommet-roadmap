@@ -8,7 +8,7 @@ import {
   ResponsiveContext,
   Text,
 } from "grommet";
-import { Next, Previous, StatusGood, StatusWarning } from "grommet-icons";
+import { Blank, Next, Previous, StatusGood, StatusWarning } from "grommet-icons";
 import { addMonths, sameMonth, subtractMonths } from "./utils";
 import Swipe from "./Swipe";
 
@@ -67,7 +67,7 @@ const Roadmap = ({ data }) => {
                   onClick={onPrevious}
                 />
               ) : (
-                <Box />
+                <Blank />
               )}
               <Heading level={2} size="small">
                 {month.toLocaleString(undefined, {
@@ -78,38 +78,39 @@ const Roadmap = ({ data }) => {
               {index === months.length - 1 ? (
                 <Button icon={<Next />} hoverIndicator onClick={onNext} />
               ) : (
-                <Box />
+                <Blank />
               )}
             </Box>
           ))}
         </Row>
         {Object.values(types).map(({ name, months }) => (
           <Box key={name}>
-            <Heading level={3} size="small">
+            <Heading level={3} size="small" color="text-weak">
               {name}
             </Heading>
             <Row>
               {months.map(({ month, items }) => (
                 <Box key={month}>
-                  {items.map(({ name, status }) => (
-                    <Box
-                      key={name}
-                      pad="small"
-                      background="background-front"
-                      margin="small"
-                      round="xsmall"
-                      direction="row"
-                      align="center"
-                      justify="between"
-                      gap="small"
-                    >
-                      <Text>{name}</Text>
-                      {status === "ok" ? (
-                        <StatusGood color="status-ok" />
-                      ) : (
-                        <StatusWarning color="status-warning" />
-                      )}
-                    </Box>
+                  {items.map(({ name, status, url }) => (
+                    <Button key={name} href={url} disabled={!url}>
+                      <Box
+                        pad="small"
+                        background="background-front"
+                        margin="small"
+                        round="xsmall"
+                        direction="row"
+                        align="center"
+                        justify="between"
+                        gap="small"
+                      >
+                        <Text>{name}</Text>
+                        {status === "ok" ? (
+                          <StatusGood color="status-ok" />
+                        ) : (
+                          <StatusWarning color="status-warning" />
+                        )}
+                      </Box>
+                    </Button>
                   ))}
                 </Box>
               ))}
