@@ -4,55 +4,55 @@
   "items": [
     {
       "name": "Data Visualization",
-      "type": "templates",
+      "type": "Templates",
       "target": "2020-09-25",
       "status": "ok"
     },
     {
       "name": "Tables",
-      "type": "templates",
+      "type": "Templates",
       "target": "2020-08-25",
       "status": "ok"
     },
     {
       "name": "Notifications",
-      "type": "templates",
+      "type": "Templates",
       "target": "2020-08-25",
       "status": "ok"
     },
     {
       "name": "Accessibility",
-      "type": "foundation",
+      "type": "Foundation",
       "target": "2020-07-25",
       "status": "ok"
     },
     {
       "name": "Figma introduction",
-      "type": "training",
+      "type": "Training",
       "target": "2020-08-25",
       "status": "ok"
     },
     {
       "name": "Designer sharing",
-      "type": "training",
+      "type": "Training",
       "target": "2020-07-25",
       "status": "ok"
     },
     {
       "name": "Page Layouts",
-      "type": "templates",
+      "type": "Templates",
       "target": "2020-07-25",
       "status": "ok"
     },
     {
       "name": "Cards",
-      "type": "templates",
+      "type": "Templates",
       "target": "2020-07-25",
       "status": "ok"
     },
     {
       "name": "Lists",
-      "type": "templates",
+      "type": "Templates",
       "target": "2020-07-25",
       "status": "ok"
     }
