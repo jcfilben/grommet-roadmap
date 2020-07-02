@@ -6,7 +6,8 @@
       "name": "Data Visualization",
       "type": "Templates",
       "target": "2020-09-25",
-      "status": "ok"
+      "status": "ok",
+      "url": "https://github.com/hpe-design/design-system/issues/846"
     },
     {
       "name": "Tables",
@@ -19,19 +20,22 @@
       "name": "Notifications",
       "type": "Templates",
       "target": "2020-09-25",
-      "status": "ok"
+      "status": "ok",
+      "url": "https://github.com/hpe-design/design-system/issues/847"
     },
     {
       "name": "Wizard guide/support",
       "type": "Templates",
       "target": "2020-010-25",
-      "status": "ok"
+      "status": "ok",
+      "url": "https://github.com/hpe-design/design-system/issues/849"
     },
     {
       "name": "In-app marketing",
       "type": "Templates",
       "target": "2020-010-25",
-      "status": "ok"
+      "status": "ok",
+      "url": "https://github.com/hpe-design/design-system/issues/848"
     },
     {
       "name": "Accessibility",
@@ -139,19 +143,22 @@
       "name": "Page Layouts",
       "type": "Templates",
       "target": "2020-06-25",
-      "status": "Done"
+      "status": "Done",
+      "url": "https://github.com/hpe-design/design-system/issues/797"
     },
     {
       "name": "Cards",
       "type": "Templates",
       "target": "2020-07-25",
-      "status": "ok"
+      "status": "ok",
+      "url": "https://github.com/hpe-design/design-system/issues/801"
     },
     {
       "name": "Lists",
       "type": "Templates",
       "target": "2020-07-25",
-      "status": "ok"
+      "status": "ok",
+      "url": "https://github.com/hpe-design/design-system/issues/799"
     }
   ]
 }
