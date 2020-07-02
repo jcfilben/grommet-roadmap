@@ -3,6 +3,12 @@
   "theme": "hpe",
   "items": [
     {
+      "name": "Listening Sessions",
+      "type": "Research",
+      "target": "2020-07-25",
+      "status": "ok"
+    },
+    {
       "name": "Data Visualization",
       "type": "Templates",
       "target": "2020-09-25",
