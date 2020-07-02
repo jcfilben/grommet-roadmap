@@ -4,55 +4,151 @@
   "items": [
     {
       "name": "Data Visualization",
-      "type": "templates",
+      "type": "Templates",
       "target": "2020-09-25",
       "status": "ok"
     },
     {
       "name": "Tables",
-      "type": "templates",
+      "type": "Templates",
       "target": "2020-08-25",
       "status": "ok"
     },
     {
       "name": "Notifications",
-      "type": "templates",
-      "target": "2020-08-25",
+      "type": "Templates",
+      "target": "2020-09-25",
+      "status": "ok"
+    },
+    {
+      "name": "Wizard guide/support",
+      "type": "Templates",
+      "target": "2020-010-25",
+      "status": "ok"
+    },
+    {
+      "name": "In-app marketing",
+      "type": "Templates",
+      "target": "2020-010-25",
       "status": "ok"
     },
     {
       "name": "Accessibility",
-      "type": "foundation",
+      "type": "Foundation",
       "target": "2020-07-25",
       "status": "ok"
     },
     {
-      "name": "Figma introduction",
-      "type": "training",
+      "name": "Align content with Brand Central",
+      "type": "Foundation",
+      "target": "2020-07-25",
+      "status": "ok"
+    },
+    {
+      "name": "FAQ page",
+      "type": "Foundation",
       "target": "2020-08-25",
       "status": "ok"
     },
     {
-      "name": "Designer sharing",
-      "type": "training",
+      "name": "Listening Sessions",
+      "type": "Research",
       "target": "2020-07-25",
+      "status": "ok"
+    },
+    {
+      "name": "Moderated usability study: Designers",
+      "type": "Research",
+      "target": "2020-08-25",
+      "status": "ok"
+    },
+    {
+      "name": "Moderated usability study: Developers",
+      "type": "Research",
+      "target": "2020-09-25",
+      "status": "ok"
+    },
+    {
+      "name": "WCAG test",
+      "type": "Research",
+      "target": "2020-10-25",
+      "status": "ok"
+    },
+    {
+      "name": "Unmoderated usability study",
+      "type": "Research",
+      "target": "2020-10-25",
+      "status": "ok"
+    },
+    {
+      "name": "Figma introduction",
+      "type": "Training",
+      "target": "2020-06-25",
+      "status": "Done"
+    },
+    {
+      "name": "Grommet Designer: Sharing",
+      "type": "Training",
+      "target": "2020-07-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: Backing up",
+      "type": "Training",
+      "target": "2020-07-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: Page layouts",
+      "type": "Training",
+      "target": "2020-08-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: Navigation",
+      "type": "Training",
+      "target": "2020-08-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: Data",
+      "type": "Training",
+      "target": "2020-09-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: DropButton",
+      "type": "Training",
+      "target": "2020-09-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: Templates",
+      "type": "Training",
+      "target": "2020-10-25",
+      "status": "ok"
+    },
+    {
+      "name": "Grommet Designer: Code",
+      "type": "Training",
+      "target": "2020-10-25",
       "status": "ok"
     },
     {
       "name": "Page Layouts",
-      "type": "templates",
-      "target": "2020-07-25",
-      "status": "ok"
+      "type": "Templates",
+      "target": "2020-06-25",
+      "status": "Done"
     },
     {
       "name": "Cards",
-      "type": "templates",
+      "type": "Templates",
       "target": "2020-07-25",
       "status": "ok"
     },
     {
       "name": "Lists",
-      "type": "templates",
+      "type": "Templates",
       "target": "2020-07-25",
       "status": "ok"
     }
