@@ -103,7 +103,7 @@ const Roadmap = ({ data }) => {
                         justify="between"
                         gap="small"
                       >
-                        <Text>{name}</Text>
+                        <Text weight="normal">{name}</Text>
                         {status === "ok" ? (
                           <StatusGood color="status-ok" />
                         ) : (
