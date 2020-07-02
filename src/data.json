@@ -1,5 +1,6 @@
 {
   "name": "HPE Design System Roadmap",
+  "theme": "hpe",
   "items": [
     {
       "name": "Data Visualization",
