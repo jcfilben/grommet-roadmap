@@ -3,12 +3,6 @@
   "theme": "hpe",
   "items": [
     {
-      "name": "Listening Sessions",
-      "type": "Research",
-      "target": "2020-07-25",
-      "status": "ok"
-    },
-    {
       "name": "Data Visualization",
       "type": "Templates",
       "target": "2020-09-25",
@@ -29,6 +23,18 @@
     {
       "name": "Accessibility",
       "type": "Foundation",
+      "target": "2020-07-25",
+      "status": "ok"
+    },
+    {
+      "name": "Align content with Brand Central",
+      "type": "Foundation",
+      "target": "2020-07-25",
+      "status": "ok"
+    },
+    {
+      "name": "Listening Sessions",
+      "type": "Research",
       "target": "2020-07-25",
       "status": "ok"
     },
