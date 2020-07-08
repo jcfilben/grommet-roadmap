@@ -47,8 +47,9 @@ const Roadmap = ({ identifier, onClose }) => {
       .then(setRoadmap)
       .catch((status) => {
         if (status === 401) setAuth(true);
+        if (status === 404) onClose();
       });
-  }, [identifier, password]);
+  }, [identifier, onClose, password]);
 
   useEffect(() => {
     if (roadmap) document.title = roadmap.name;
@@ -284,7 +285,10 @@ const Roadmap = ({ identifier, onClose }) => {
           {editRoadmap && (
             <RoadmapEdit
               roadmap={roadmap}
-              onChange={setRoadmap}
+              onChange={(nextRoadmap) => {
+                if (nextRoadmap) setRoadmap(nextRoadmap);
+                else onClose();
+              }}
               onDone={() => setEditRoadmap(false)}
             />
           )}

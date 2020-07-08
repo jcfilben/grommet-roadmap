@@ -32,7 +32,7 @@ exports.roadmaps = (req, res) => {
   res.set('Access-Control-Allow-Origin', '*');
 
   if (req.method === 'OPTIONS') {
-    res.set('Access-Control-Allow-Methods', 'GET, POST, PUT');
+    res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.set('Access-Control-Max-Age', '3600');
     res.status(204).send('');
@@ -72,7 +72,7 @@ exports.roadmaps = (req, res) => {
         delete roadmap.password;
         res.status(200).type('json').send(JSON.stringify(roadmap));
       })
-      .catch((e) => res.status(400).send(e.message));
+      .catch((e) => res.status(404).send(e.message));
   }
 
   if (req.method === 'POST') {
@@ -137,6 +137,28 @@ exports.roadmaps = (req, res) => {
         return file
           .save(JSON.stringify(nextRoadmap), { resumable: false })
           .then(() => res.status(200).send());
+      })
+      .catch((e) => res.status(400).send(e.message));
+  }
+
+  if (req.method === 'DELETE') {
+    const parts = req.url.split('/');
+    const id = decodeURIComponent(parts[1]);
+    const password = getPassword();
+    const file = bucket.file(`${id}.json`);
+
+    return file
+      .download()
+      .then((data) => {
+        const roadmap = JSON.parse(data[0]);
+        if (
+          roadmap.password &&
+          (!password || !checkPassword(roadmap, password))
+        ) {
+          return res.header('WWW-Authenticate', 'Basic').status(401).send();
+        }
+
+        return file.delete().then(() => res.status(200).send());
       })
       .catch((e) => res.status(400).send(e.message));
   }

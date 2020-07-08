@@ -16,6 +16,11 @@ const upgrade = (roadmap) => {
   // add sections if not there
   if (!roadmap.sections)
     roadmap.sections = Array.from(new Set(roadmap.items.map((i) => i.section)));
+  // ensure all item.section are in sections
+  roadmap.items.forEach(({ section }) => {
+    if (section && !roadmap.sections.includes(section))
+      roadmap.sections.push(section);
+  });
 };
 
 const addIdentifier = (roadmap, password) => {
@@ -58,52 +63,50 @@ export const create = (roadmap) => {
     .then((response) => response.text())
     .then((id) => {
       roadmap.id = id;
+      const password = roadmap.password;
       delete roadmap.password;
       global.localStorage.setItem(id, JSON.stringify(roadmap));
-      return addIdentifier(roadmap, roadmap.password);
+      return addIdentifier(roadmap, password);
     });
 };
 
 // returns a roadmap or false
 export const get = (identifier) => {
-  let { id, password } = identifier;
-  // if we don't have a password, look for one in local storage
-  if (!password) ({ password } = getIdentifier(id) || {});
-  const headers = password
-    ? {
-        Authorization: `Basic ${btoa(password)}`,
+  const { id, password: passwordArg } = identifier;
+  const password = passwordArg || getIdentifier(id).password;
+  const auth = password ? { Authorization: `Basic ${btoa(password)}` } : {};
+  return fetch(`${apiUrl}/${id}`, {
+    method: 'GET',
+    headers: { ...auth },
+  }).then((response) => {
+    if (!response.ok) {
+      if (response.status === 404) {
+        global.localStorage.removeItem(id);
+        removeIdentifier(id);
       }
-    : undefined;
-  return fetch(`${apiUrl}/${id}`, { method: 'GET', headers }).then(
-    (response) => {
-      if (!response.ok) {
-        if (response.status === 404) {
-          global.localStorage.removeItem(id);
-          removeIdentifier(id);
-        }
-        throw response.status;
-      } else
-        return response.json().then((nextRoadmap) => {
-          upgrade(nextRoadmap);
-          global.localStorage.setItem(
-            nextRoadmap.id,
-            JSON.stringify(nextRoadmap),
-          );
-          addIdentifier(nextRoadmap, password);
-          return nextRoadmap;
-        });
-    },
-  );
+      throw response.status;
+    } else
+      return response.json().then((nextRoadmap) => {
+        upgrade(nextRoadmap);
+        global.localStorage.setItem(
+          nextRoadmap.id,
+          JSON.stringify(nextRoadmap),
+        );
+        addIdentifier(nextRoadmap, password);
+        return nextRoadmap;
+      });
+  });
 };
 
 // returns nothing, throws an exception if unable to update
 export const update = (roadmap, passwordArg) => {
   const { id } = roadmap;
   const password = passwordArg || getIdentifier(id).password;
+  const auth = password ? { Authorization: `Basic ${btoa(password)}` } : {};
   return fetch(`${apiUrl}/${id}`, {
     method: 'PUT',
     headers: {
-      Authorization: `Basic ${btoa(password)}`,
+      ...auth,
       'Content-Type': 'application/json; charset=UTF-8',
     },
     body: JSON.stringify(roadmap),
@@ -119,5 +122,26 @@ export const update = (roadmap, passwordArg) => {
     if (roadmap.password) addIdentifier(roadmap, roadmap.password);
     // if user supplied a password since we didn't ahve one, remember it
     else if (passwordArg) addIdentifier(roadmap, passwordArg);
+  });
+};
+
+// returns nothing, throws an exception if unable to delete
+export const delet = (roadmap, passwordArg) => {
+  const { id } = roadmap;
+  const password = passwordArg || getIdentifier(id).password;
+  const auth = password ? { Authorization: `Basic ${btoa(password)}` } : {};
+  return fetch(`${apiUrl}/${id}`, {
+    method: 'DELETE',
+    headers: { ...auth },
+  }).then((response) => {
+    if (!response.ok) {
+      if (response.status === 404) {
+        global.localStorage.removeItem(id);
+        removeIdentifier(id);
+      }
+      throw response.status;
+    }
+    global.localStorage.removeItem(id);
+    removeIdentifier(id);
   });
 };

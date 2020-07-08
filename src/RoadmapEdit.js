@@ -13,7 +13,7 @@ import {
   TextInput,
 } from 'grommet';
 import { Close, Down, Up } from 'grommet-icons';
-import { update } from './data';
+import { delet, update } from './data';
 import Auth from './Auth';
 
 const RoadmapEdit = ({ roadmap, onChange, onDone }) => {
@@ -126,14 +126,13 @@ const RoadmapEdit = ({ roadmap, onChange, onDone }) => {
                 />
                 <Button
                   label="Delete"
-                  disabled
                   onClick={() => {
-                    // setChanging(true);
-                    // delete(roadmap).then(() => {
-                    //   setChanging(false);
-                    //   onChange(undefined);
-                    //   onDone();
-                    // });
+                    setChanging(true);
+                    delet(roadmap).then(() => {
+                      setChanging(false);
+                      onChange(undefined);
+                      onDone();
+                    });
                   }}
                 />
               </Footer>
