@@ -1,38 +1,48 @@
-import React, { useEffect, useMemo } from "react";
-import { Box, Grid, Grommet, Heading } from "grommet";
-import { grommet } from "grommet/themes";
-import { hpe } from "grommet-theme-hpe";
-import Roadmap from "./Roadmap";
-import data from "./data";
-
-const themes = {
-  hpe: hpe,
-  grommet: grommet,
-};
+import React, { useEffect, useState } from 'react';
+import { Box, Grid, Grommet } from 'grommet';
+import { grommet } from 'grommet/themes';
+import Roadmap from './Roadmap';
+import Manage from './Manage';
 
 const App = () => {
-  const theme = useMemo(() => themes[data.theme] || themes.grommet, []);
+  const [identifier, setIdentifier] = useState();
 
+  // load id from URL, if any
   useEffect(() => {
-    document.title = data.name;
-  }, [])
+    const id = window.location.pathname.slice(1);
+    setIdentifier(id ? { id } : false);
+  }, []);
 
   return (
-    <Grommet full theme={theme} background="background-back">
-      <Grid columns={["flex", ["small", "xlarge"], "flex"]}>
+    <Grommet full theme={grommet} background="background-back">
+      <Grid fill columns={['flex', ['small', 'xlarge'], 'flex']}>
         <Box />
-        <Box margin={{ horizontal: "large", bottom: 'large' }}>
-          <Box alignSelf="center">
-            <Heading textAlign="center" size="small">
-              {data.name}
-            </Heading>
-          </Box>
-          <Roadmap data={data} />
+        <Box margin={{ horizontal: 'large' }}>
+          {identifier ? (
+            <Roadmap
+              identifier={identifier}
+              onClose={() => {
+                window.history.pushState(undefined, undefined, '/');
+                setIdentifier(undefined);
+              }}
+            />
+          ) : (
+            <Manage
+              onSelect={(nextIdentifier) => {
+                window.history.pushState(
+                  undefined,
+                  undefined,
+                  `/${nextIdentifier.id}`,
+                );
+                setIdentifier(nextIdentifier);
+              }}
+            />
+          )}
         </Box>
         <Box />
       </Grid>
     </Grommet>
   );
-}
+};
 
 export default App;
