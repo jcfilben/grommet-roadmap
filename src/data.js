@@ -44,7 +44,7 @@ const removeIdentifier = (id) => {
 const getIdentifier = (id) =>
   JSON.parse(global.localStorage.getItem('roadmaps') || '[]').find(
     (i) => i.id === id,
-  );
+  ) || {};
 
 // returns an array of identifiers
 export const list = () =>
