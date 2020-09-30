@@ -79,16 +79,18 @@ const Roadmap = ({ identifier, onClose }) => {
       const monthsItems = items.filter(({ target }) =>
         months.some((month) => sameMonth(month, target)),
       );
-      return roadmap.sections.map((name) => ({
-        name,
-        months: months.map((month) => ({
-          month,
-          items: monthsItems.filter(
-            ({ section, target }) =>
-              name === section && sameMonth(month, target),
-          ),
-        })),
-      }));
+      return roadmap.sections
+        .map((name) => ({
+          name,
+          months: months.map((month) => ({
+            month,
+            items: monthsItems.filter(
+              ({ section, target }) =>
+                name === section && sameMonth(month, target),
+            ),
+          })),
+        }))
+        .filter((s) => s.months.some((m) => m.items.length));
     }
     return [];
   }, [items, months, roadmap]);
