@@ -16,7 +16,7 @@ import {
   Text,
   ThemeContext,
 } from 'grommet';
-import { Add, Blank, Navigate, Next, Previous } from 'grommet-icons';
+import { Add, Blank, Navigate, Next, Previous, Share } from 'grommet-icons';
 import { grommet } from 'grommet/themes';
 import { hpe } from 'grommet-theme-hpe';
 import { addMonths, sameMonth, subtractMonths } from './utils';
@@ -95,12 +95,16 @@ const Roadmap = ({ identifier, onClose }) => {
     return [];
   }, [items, months, roadmap]);
 
-  const Row = (props) => (
-    <Grid
-      columns={responsive === 'small' ? 'auto' : ['1/3', '1/3', '1/3']}
-      {...props}
-    />
-  );
+  const Row = (props) => {
+    if (responsive === 'small') return <Box {...props} />;
+    return (
+      <Grid columns={['flex', ['small', 'large'], 'flex']}>
+        <Box />
+        <Grid columns={['1/3', '1/3', '1/3']} {...props} />
+        <Box />
+      </Grid>
+    );
+  };
 
   const onNext = useCallback(() => setDate(addMonths(date, 1)), [date]);
   const onPrevious = useCallback(() => setDate(subtractMonths(date, 1)), [
@@ -146,9 +150,9 @@ const Roadmap = ({ identifier, onClose }) => {
           background={editing ? { color: 'background-contrast' } : undefined}
           gap="small"
         >
-          <Header>
+          <Header background={{ color: 'background', dark: true }} pad="small">
             <Button icon={<Navigate />} onClick={onClose} />
-            <Heading textAlign="center" size="small" margin="none">
+            <Heading textAlign="center" size="24px" margin="none">
               {editing ? (
                 <Button
                   label={roadmap.name}
@@ -182,7 +186,7 @@ const Roadmap = ({ identifier, onClose }) => {
                   ) : (
                     <Blank />
                   )}
-                  <Text size="large">
+                  <Text>
                     {month.toLocaleString(undefined, {
                       month: 'long',
                       year: 'numeric',
@@ -200,30 +204,26 @@ const Roadmap = ({ identifier, onClose }) => {
           <Box flex overflow="auto" pad={{ bottom: 'large' }}>
             {Object.values(sections).map(({ name, months }) => (
               <Box flex={false} key={name}>
-                <Heading
-                  level={3}
-                  size="small"
-                  color="text-weak"
-                  margin={{
-                    top: 'small',
-                    bottom: 'small',
-                    horizontal: 'medium',
-                  }}
-                >
-                  {name}
-                </Heading>
+                <Row>
+                  <Heading
+                    level={3}
+                    size="18px"
+                    color="text-weak"
+                    margin={{
+                      top: 'small',
+                      bottom: 'small',
+                      horizontal: 'medium',
+                    }}
+                  >
+                    {name}
+                  </Heading>
+                </Row>
                 <Row>
                   {months.map(({ month, items }) => (
                     <Box key={month} gap="small" margin="small">
                       {items.map(({ index, name, note, status, url }) => {
                         let content = (
-                          <Box
-                            key={name}
-                            pad="small"
-                            background="background-front"
-                            round="xsmall"
-                            gap="small"
-                          >
+                          <Box key={name} pad="small" gap="small" border="top">
                             <Box
                               direction="row"
                               align="center"
@@ -234,16 +234,7 @@ const Roadmap = ({ identifier, onClose }) => {
                                 <Text weight="bold" textAlign="start" truncate>
                                   {name}
                                 </Text>
-                                {url && (
-                                  <Box
-                                    pad="xxsmall"
-                                    background="background-contrast"
-                                    border={[
-                                      { side: 'top', size: 'small' },
-                                      { side: 'right', size: 'small' },
-                                    ]}
-                                  />
-                                )}
+                                {url && <Share size="small" />}
                               </Box>
                               <Status value={status} />
                             </Box>

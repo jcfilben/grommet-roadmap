@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import {
   Box,
   Button,
+  DateInput,
   Footer,
   Form,
   FormField,
   Header,
   Layer,
-  RadioButtonGroup,
+  Select,
   TextArea,
   TextInput,
 } from 'grommet';
-import { Calendar, Close } from 'grommet-icons';
+import { Close } from 'grommet-icons';
 import { update } from './data';
-import Status from './Status';
 import Auth from './Auth';
 
 const defaultItem = { name: '', section: '', target: '', status: '', url: '' };
@@ -95,27 +95,10 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                   required
                   margin="none"
                 >
-                  {/* replace with DateInput soon! */}
-                  <TextInput
-                    name="target"
-                    id="target"
-                    placeholder="yyyy-mm-dd"
-                    icon={<Calendar />}
-                    reverse
-                  />
+                  <DateInput name="target" id="target" format="mm/dd/yyyy" />
                 </FormField>
                 <FormField name="status" htmlFor="status" margin="none">
-                  <RadioButtonGroup
-                    name="status"
-                    id="status"
-                    direction="row"
-                    gap="none"
-                    options={statusOptions}
-                  >
-                    {(option, { checked, hover }) => (
-                      <Status value={option} active={checked} />
-                    )}
-                  </RadioButtonGroup>
+                  <Select name="status" id="status" options={statusOptions} />
                 </FormField>
               </Box>
               <FormField name="name" htmlFor="name" required>
