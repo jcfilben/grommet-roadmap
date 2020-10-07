@@ -32,6 +32,18 @@ const themes = {
   grommet: grommet,
 };
 
+const monthCounts = {
+  small: 1,
+  medium: 3,
+  large: 5,
+};
+
+const columnPercents = {
+  small: 'full',
+  medium: '33.33%',
+  large: '20%',
+};
+
 const Roadmap = ({ identifier, onClose }) => {
   const responsive = useContext(ResponsiveContext);
   const [date, setDate] = useState(new Date());
@@ -66,7 +78,7 @@ const Roadmap = ({ identifier, onClose }) => {
   // months to show, array of Date objects
   const months = useMemo(
     () =>
-      Array.from(Array(responsive === 'small' ? 1 : 3)).map((_, i) =>
+      Array.from(Array(monthCounts[responsive])).map((_, i) =>
         addMonths(date, i),
       ),
     [date, responsive],
@@ -98,9 +110,15 @@ const Roadmap = ({ identifier, onClose }) => {
   const Row = (props) => {
     if (responsive === 'small') return <Box {...props} />;
     return (
-      <Grid columns={['flex', ['small', 'large'], 'flex']}>
+      <Grid
+        columns={[
+          'flex',
+          ['small', responsive === 'medium' ? 'large' : '80vw'],
+          'flex',
+        ]}
+      >
         <Box />
-        <Grid columns={['1/3', '1/3', '1/3']} {...props} />
+        <Grid columns={columnPercents[responsive]} {...props} />
         <Box />
       </Grid>
     );
