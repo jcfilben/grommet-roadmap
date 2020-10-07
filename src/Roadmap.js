@@ -44,9 +44,12 @@ const columnPercents = {
   large: '20%',
 };
 
+const now = new Date();
+now.setDate(1);
+
 const Roadmap = ({ identifier, onClose }) => {
   const responsive = useContext(ResponsiveContext);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(now);
   const [auth, setAuth] = useState();
   const [password, setPassword] = React.useState();
   const [roadmap, setRoadmap] = useState();
