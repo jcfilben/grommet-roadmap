@@ -8,7 +8,6 @@ import {
   FormField,
   Header,
   Layer,
-  Select,
   TextArea,
   TextInput,
 } from 'grommet';
@@ -17,7 +16,6 @@ import { update } from './data';
 import Auth from './Auth';
 
 const defaultItem = { name: '', section: '', target: '', status: '', url: '' };
-const statusOptions = ['ready', 'in progress', 'done', 'none'];
 
 const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
   const [value, setValue] = useState(
@@ -35,11 +33,20 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     delete nextItem.index;
     if (nextItem.status === 'none') delete nextItem.status;
     if (!nextItem.url) delete nextItem.url;
+    if (!nextItem.section) delete nextItem.section;
+    if (!nextItem.label) delete nextItem.label;
     if (index >= 0) nextRoadmap.items[index] = nextItem;
     else nextRoadmap.items.unshift(nextItem);
     // add section, if needed
-    if (!nextRoadmap.sections.find((s) => nextItem.section)) {
+    if (
+      nextItem.section &&
+      !nextRoadmap.sections.find((s) => nextItem.section)
+    ) {
       nextRoadmap.sections.push(nextItem.section);
+    }
+    // add label, if needed
+    if (!nextRoadmap.labels.find(({ name }) => name === nextItem.label)) {
+      nextRoadmap.labels.push({ name: nextItem.label });
     }
 
     update(nextRoadmap, password)
@@ -68,25 +75,17 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
             <Form value={value} onChange={setValue} onSubmit={() => submit()}>
               <Box
                 direction="row-responsive"
-                align="center"
+                align="start"
                 justify="between"
                 gap="small"
                 margin={{ bottom: 'medium' }}
               >
-                <FormField
-                  name="section"
-                  htmlFor="section"
-                  required
-                  margin="none"
-                >
+                <FormField name="section" htmlFor="section" margin="none">
                   <TextInput
                     name="section"
                     id="section"
                     placeholder="Section"
-                    suggestions={Array.from(
-                      new Set(roadmap.items.map((i) => i.section)),
-                    )}
-                    onSelect={() => {} /* TODO */}
+                    suggestions={roadmap.sections}
                   />
                 </FormField>
                 <FormField
@@ -97,8 +96,13 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                 >
                   <DateInput name="target" id="target" format="mm/dd/yyyy" />
                 </FormField>
-                <FormField name="status" htmlFor="status" margin="none">
-                  <Select name="status" id="status" options={statusOptions} />
+                <FormField name="label" htmlFor="label" margin="none">
+                  <TextInput
+                    name="label"
+                    id="label"
+                    placeholder="Label"
+                    suggestions={roadmap.labels.map(({ name }) => name)}
+                  />
                 </FormField>
               </Box>
               <FormField name="name" htmlFor="name" required>

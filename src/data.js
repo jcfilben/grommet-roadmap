@@ -15,12 +15,23 @@ const upgrade = (roadmap) => {
   });
   // add sections if not there
   if (!roadmap.sections)
-    roadmap.sections = Array.from(new Set(roadmap.items.map((i) => i.section)));
+    roadmap.sections = Array.from(
+      new Set(roadmap.items.filter((i) => i.section).map((i) => i.section)),
+    );
   // ensure all item.section are in sections
   roadmap.items.forEach(({ section }) => {
     if (section && !roadmap.sections.includes(section))
       roadmap.sections.push(section);
   });
+  // clean up blank sections
+  roadmap.sections = roadmap.sections.filter((s) => s);
+  // add labels
+  if (!roadmap.labels)
+    roadmap.labels = Array.from(
+      new Set(roadmap.items.filter((i) => i.label).map((i) => i.label)),
+    );
+  // clean up blank labels
+  roadmap.labels = roadmap.labels.filter((l) => l.name);
 };
 
 const addIdentifier = (roadmap, password) => {

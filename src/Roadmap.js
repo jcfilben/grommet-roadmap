@@ -9,6 +9,8 @@ import {
   Box,
   Button,
   Card,
+  CardFooter,
+  CardHeader,
   Grid,
   Header,
   Heading,
@@ -25,7 +27,6 @@ import { get } from './data';
 import Swipe from './Swipe';
 import ItemEdit from './ItemEdit';
 import RoadmapEdit from './RoadmapEdit';
-import Status from './Status';
 import Auth from './Auth';
 
 const themes = {
@@ -91,11 +92,12 @@ const Roadmap = ({ identifier, onClose }) => {
   // normalize data for how we want to display it
   // section -> month -> items
   const sections = useMemo(() => {
+    let result = [];
     if (roadmap) {
       const monthsItems = items.filter(({ target }) =>
         months.some((month) => sameMonth(month, target)),
       );
-      return roadmap.sections
+      result = roadmap.sections
         .map((name) => ({
           name,
           months: months.map((month) => ({
@@ -107,9 +109,23 @@ const Roadmap = ({ identifier, onClose }) => {
           })),
         }))
         .filter((s) => s.months.some((m) => m.items.length));
+      // add any non-section items
+      const nonSectionItems = monthsItems.filter(({ section }) => !section);
+      if (nonSectionItems.length) {
+        result.push({
+          months: months.map((month) => ({
+            month,
+            items: nonSectionItems.filter(({ target }) =>
+              sameMonth(month, target),
+            ),
+          })),
+        });
+      }
     }
-    return [];
+    return result;
   }, [items, months, roadmap]);
+
+  console.log('!!!', roadmap, sections);
 
   const Row = (props) => {
     if (responsive === 'small') return <Box {...props} />;
@@ -225,7 +241,7 @@ const Roadmap = ({ identifier, onClose }) => {
           </Box>
           <Box flex overflow="auto" pad={{ bottom: 'large' }}>
             {Object.values(sections).map(({ name, months }) => (
-              <Box flex={false} key={name}>
+              <Box flex={false} key={name || 'none'}>
                 <Row>
                   <Heading
                     level={3}
@@ -244,51 +260,58 @@ const Roadmap = ({ identifier, onClose }) => {
                   {months.map(({ month, items }) => (
                     <Box
                       key={month}
-                      gap="small"
-                      pad="small"
+                      gap="medium"
+                      pad={{ vertical: 'medium', horizontal: 'small' }}
                       background="background-back"
                       responsive={false}
                     >
-                      {items.map(({ index, name, note, status, url }) => {
-                        let content = (
-                          <Card key={name} pad="small" gap="small">
-                            <Box
-                              direction="row"
-                              align="center"
-                              justify="between"
-                              gap="small"
-                            >
-                              <Box direction="row" align="start" gap="xsmall">
+                      {items.map(
+                        ({ index, label: labelName, name, note, url }) => {
+                          const label =
+                            labelName &&
+                            roadmap.labels &&
+                            roadmap.labels.find(
+                              ({ name }) => name === labelName,
+                            );
+                          let content = (
+                            <Card key={name}>
+                              <CardHeader>
                                 <Text weight="bold" textAlign="start">
                                   {name}
                                 </Text>
                                 {url && <Share size="small" />}
-                              </Box>
-                              <Status value={status} />
-                            </Box>
-                            {note && (
-                              <Text weight="normal" textAlign="start">
-                                {note}
-                              </Text>
-                            )}
-                          </Card>
-                        );
-                        if (editing || url)
-                          content = (
-                            <Button
-                              key={name}
-                              href={editing ? undefined : url}
-                              plain
-                              hoverIndicator
-                              onClick={
-                                editing ? () => setItemIndex(index) : undefined
-                              }
-                            >
-                              {content}
-                            </Button>
+                              </CardHeader>
+                              {note && (
+                                <Text weight="normal" textAlign="start">
+                                  {note}
+                                </Text>
+                              )}
+                              {label && (
+                                <CardFooter background={label.color}>
+                                  <Text size="small">{label.name}</Text>
+                                </CardFooter>
+                              )}
+                            </Card>
                           );
-                        return content;
-                      })}
+                          if (editing || url)
+                            content = (
+                              <Button
+                                key={name}
+                                href={editing ? undefined : url}
+                                plain
+                                hoverIndicator
+                                onClick={
+                                  editing
+                                    ? () => setItemIndex(index)
+                                    : undefined
+                                }
+                              >
+                                {content}
+                              </Button>
+                            );
+                          return content;
+                        },
+                      )}
                     </Box>
                   ))}
                 </Row>

@@ -75,7 +75,7 @@ const RoadmapEdit = ({ roadmap, onChange, onDone }) => {
                 />
               </FormField>
               <Box gap="small">
-                <Heading level={3} size="small" margin="none">
+                <Heading level={3} size="small">
                   Sections
                 </Heading>
                 {value.sections.map((section, index) => (
@@ -111,6 +111,45 @@ const RoadmapEdit = ({ roadmap, onChange, onDone }) => {
                         const tmpSection = nextValue.sections[index + 1];
                         nextValue.sections[index + 1] = section;
                         nextValue.sections[index] = tmpSection;
+                        setValue(nextValue);
+                      }}
+                    />
+                  </Box>
+                ))}
+              </Box>
+              <Box gap="small">
+                <Heading level={3} size="small">
+                  Labels
+                </Heading>
+                {value.labels.map((label, index) => (
+                  <Box key={index} direction="row" gap="small">
+                    <TextInput
+                      placeholder="Name"
+                      value={label.name}
+                      onChange={(event) => {
+                        const nextValue = JSON.parse(JSON.stringify(value));
+                        const nextName = event.target.value;
+                        nextValue.labels[index] = {
+                          ...nextValue.labels[index],
+                          name: nextName,
+                        };
+                        nextValue.items.forEach((i) => {
+                          if (i.label === label.name) i.label = nextName;
+                        });
+                        setValue(nextValue);
+                      }}
+                    />
+                    <Box pad="small" background={label.color} />
+                    <TextInput
+                      placeholder="Color"
+                      value={label.color || ''}
+                      onChange={(event) => {
+                        const nextValue = JSON.parse(JSON.stringify(value));
+                        const nextColor = event.target.value;
+                        nextValue.labels[index] = {
+                          ...nextValue.labels[index],
+                          color: nextColor,
+                        };
                         setValue(nextValue);
                       }}
                     />
