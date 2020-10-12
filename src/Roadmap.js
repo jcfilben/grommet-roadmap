@@ -9,6 +9,7 @@ import {
   Box,
   Button,
   Card,
+  CardBody,
   CardFooter,
   CardHeader,
   Grid,
@@ -281,11 +282,7 @@ const Roadmap = ({ identifier, onClose }) => {
                                 </Text>
                                 {url && <Share size="small" />}
                               </CardHeader>
-                              {note && (
-                                <Text weight="normal" textAlign="start">
-                                  {note}
-                                </Text>
-                              )}
+                              {note && <CardBody>{note}</CardBody>}
                               {label && (
                                 <CardFooter background={label.color}>
                                   <Text size="small">{label.name}</Text>
