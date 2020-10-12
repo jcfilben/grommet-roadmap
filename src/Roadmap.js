@@ -8,6 +8,7 @@ import React, {
 import {
   Box,
   Button,
+  Card,
   Grid,
   Header,
   Heading,
@@ -189,7 +190,7 @@ const Roadmap = ({ identifier, onClose }) => {
               <Blank />
             )}
           </Header>
-          <Box flex={false}>
+          <Box flex={false} margin={{ top: 'medium' }}>
             <Row>
               {months.map((month, index) => (
                 <Box
@@ -233,7 +234,7 @@ const Roadmap = ({ identifier, onClose }) => {
                     margin={{
                       top: 'small',
                       bottom: 'small',
-                      horizontal: 'medium',
+                      horizontal: 'small',
                     }}
                   >
                     {name}
@@ -241,10 +242,16 @@ const Roadmap = ({ identifier, onClose }) => {
                 </Row>
                 <Row>
                   {months.map(({ month, items }) => (
-                    <Box key={month} gap="small" margin="small">
+                    <Box
+                      key={month}
+                      gap="small"
+                      pad="small"
+                      background="background-back"
+                      responsive={false}
+                    >
                       {items.map(({ index, name, note, status, url }) => {
                         let content = (
-                          <Box key={name} pad="small" gap="small" border="top">
+                          <Card key={name} pad="small" gap="small">
                             <Box
                               direction="row"
                               align="center"
@@ -252,7 +259,7 @@ const Roadmap = ({ identifier, onClose }) => {
                               gap="small"
                             >
                               <Box direction="row" align="start" gap="xsmall">
-                                <Text weight="bold" textAlign="start" truncate>
+                                <Text weight="bold" textAlign="start">
                                   {name}
                                 </Text>
                                 {url && <Share size="small" />}
@@ -264,7 +271,7 @@ const Roadmap = ({ identifier, onClose }) => {
                                 {note}
                               </Text>
                             )}
-                          </Box>
+                          </Card>
                         );
                         if (editing || url)
                           content = (
