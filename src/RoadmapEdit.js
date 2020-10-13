@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
+import { ThemeContext } from 'styled-components';
 import {
   Box,
   Button,
@@ -17,9 +18,14 @@ import { delet, update } from './data';
 import Auth from './Auth';
 
 const RoadmapEdit = ({ roadmap, onChange, onDone }) => {
+  const theme = useContext(ThemeContext);
   const [value, setValue] = useState(roadmap);
   const [changing, setChanging] = useState();
   const [auth, setAuth] = useState();
+
+  const colors = useMemo(() => Object.keys(theme.global.colors).sort(), [
+    theme,
+  ]);
 
   const submit = (password) => {
     setChanging(true);
@@ -142,6 +148,7 @@ const RoadmapEdit = ({ roadmap, onChange, onDone }) => {
                     <Box pad="small" background={label.color} />
                     <TextInput
                       placeholder="Color"
+                      suggestions={colors}
                       value={label.color || ''}
                       onChange={(event) => {
                         const nextValue = JSON.parse(JSON.stringify(value));
@@ -149,6 +156,14 @@ const RoadmapEdit = ({ roadmap, onChange, onDone }) => {
                         nextValue.labels[index] = {
                           ...nextValue.labels[index],
                           color: nextColor,
+                        };
+                        setValue(nextValue);
+                      }}
+                      onSuggestionSelect={(event) => {
+                        const nextValue = JSON.parse(JSON.stringify(value));
+                        nextValue.labels[index] = {
+                          ...nextValue.labels[index],
+                          color: event.suggestion,
                         };
                         setValue(nextValue);
                       }}
