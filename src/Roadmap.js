@@ -126,8 +126,6 @@ const Roadmap = ({ identifier, onClose }) => {
     return result;
   }, [items, months, roadmap]);
 
-  console.log('!!!', roadmap, sections);
-
   const Row = (props) => {
     if (responsive === 'small') return <Box {...props} />;
     return (
