@@ -5,7 +5,19 @@ import Roadmap from './Roadmap';
 import Manage from './Manage';
 
 const App = () => {
+  const [themeMode, setThemeMode] = useState();
   const [identifier, setIdentifier] = useState();
+
+  // align the themeMode with the browser/OS setting
+  useEffect(() => {
+    if (window.matchMedia) {
+      setThemeMode(
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light',
+      );
+    }
+  }, []);
 
   // load id from URL, if any
   useEffect(() => {
@@ -14,7 +26,7 @@ const App = () => {
   }, []);
 
   return (
-    <Grommet full theme={grommet}>
+    <Grommet full theme={grommet} themeMode={themeMode}>
       {identifier ? (
         <Roadmap
           identifier={identifier}
