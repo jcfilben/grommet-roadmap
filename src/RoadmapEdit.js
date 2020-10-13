@@ -38,7 +38,7 @@ const RoadmapEdit = ({ roadmap, onChange, onDone }) => {
 
   return (
     <Layer position="top" onEsc={onDone}>
-      <Box>
+      <Box overflow="auto">
         <Header justify="end">
           <Button icon={<Close />} onClick={onDone} />
         </Header>
