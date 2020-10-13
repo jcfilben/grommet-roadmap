@@ -24,7 +24,7 @@ import { Add, Blank, Navigate, Next, Previous, Share } from 'grommet-icons';
 import { grommet } from 'grommet/themes';
 import { hpe } from 'grommet-theme-hpe';
 import { addMonths, sameMonth, subtractMonths } from './utils';
-import { get } from './data';
+import { get, update } from './data';
 import Swipe from './Swipe';
 import ItemEdit from './ItemEdit';
 import RoadmapEdit from './RoadmapEdit';
@@ -59,6 +59,8 @@ const Roadmap = ({ identifier, onClose }) => {
   const [editing, setEditing] = useState();
   const [editRoadmap, setEditRoadmap] = useState();
   const [itemIndex, setItemIndex] = useState();
+  const [dragging, setDragging] = React.useState();
+  const [dropTarget, setDropTarget] = React.useState();
 
   useEffect(() => {
     get(password ? { ...identifier, password } : identifier)
@@ -147,6 +149,26 @@ const Roadmap = ({ identifier, onClose }) => {
   const onPrevious = useCallback(() => setDate(subtractMonths(date, 1)), [
     date,
   ]);
+
+  const moveItem = useCallback(
+    (event) => {
+      const nextRoadmap = JSON.parse(JSON.stringify(roadmap));
+      const nextItem = nextRoadmap.items.find(({ name }) => name === dragging);
+      nextItem.target = dropTarget.toISOString();
+      event.dataTransfer.clearData();
+      setRoadmap(nextRoadmap);
+      setDragging(undefined);
+      setDropTarget(undefined);
+      update(nextRoadmap, password)
+        .then(() => {
+          // ???
+        })
+        .catch((status) => {
+          if (status === 401) setAuth(true);
+        });
+    },
+    [dragging, dropTarget, password, roadmap],
+  );
 
   if (auth)
     return (
@@ -261,8 +283,24 @@ const Roadmap = ({ identifier, onClose }) => {
                       key={month}
                       gap="medium"
                       pad={{ vertical: 'medium', horizontal: 'small' }}
-                      background="background-back"
+                      background={
+                        dragging && dropTarget !== month
+                          ? 'background-contrast'
+                          : 'background-back'
+                      }
                       responsive={false}
+                      onDragEnter={(event) => {
+                        if (dragging) {
+                          event.preventDefault();
+                          setDropTarget(month);
+                        } else {
+                          setDropTarget(undefined);
+                        }
+                      }}
+                      onDragOver={(event) => {
+                        if (dragging) event.preventDefault();
+                      }}
+                      onDrop={moveItem}
                     >
                       {items.map(
                         ({ index, label: labelName, name, note, url }) => {
@@ -273,11 +311,21 @@ const Roadmap = ({ identifier, onClose }) => {
                               ({ name }) => name === labelName,
                             );
                           let content = (
-                            <Card key={name}>
+                            <Card
+                              key={name}
+                              draggable={editing}
+                              onDragStart={(event) => {
+                                // for Firefox
+                                event.dataTransfer.setData('text/plain', '');
+                                setDragging(name);
+                              }}
+                              onDragEnd={() => {
+                                setDragging(undefined);
+                                setDropTarget(undefined);
+                              }}
+                            >
                               <CardHeader>
-                                <Text weight="bold" textAlign="start">
-                                  {name}
-                                </Text>
+                                <Text weight="bold">{name}</Text>
                                 {url && <Share size="small" />}
                               </CardHeader>
                               {note && <CardBody>{note}</CardBody>}
@@ -294,7 +342,6 @@ const Roadmap = ({ identifier, onClose }) => {
                                 key={name}
                                 href={editing ? undefined : url}
                                 plain
-                                hoverIndicator
                                 onClick={
                                   editing
                                     ? () => setItemIndex(index)
