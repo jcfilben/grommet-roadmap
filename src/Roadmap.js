@@ -153,7 +153,7 @@ const Roadmap = ({ identifier, onClose }) => {
   const moveItem = useCallback(
     (event) => {
       const nextRoadmap = JSON.parse(JSON.stringify(roadmap));
-      const nextItem = nextRoadmap.items.find(({ name }) => name === dragging);
+      const nextItem = nextRoadmap.items.find((_, index) => index === dragging);
       nextItem.target = dropTarget.toISOString();
       event.dataTransfer.clearData();
       setRoadmap(nextRoadmap);
@@ -284,13 +284,13 @@ const Roadmap = ({ identifier, onClose }) => {
                       gap="medium"
                       pad={{ vertical: 'medium', horizontal: 'small' }}
                       background={
-                        dragging && dropTarget !== month
+                        dragging !== undefined && dropTarget !== month
                           ? 'background-contrast'
                           : 'background-back'
                       }
                       responsive={false}
                       onDragEnter={(event) => {
-                        if (dragging) {
+                        if (dragging !== undefined) {
                           event.preventDefault();
                           setDropTarget(month);
                         } else {
@@ -298,7 +298,7 @@ const Roadmap = ({ identifier, onClose }) => {
                         }
                       }}
                       onDragOver={(event) => {
-                        if (dragging) event.preventDefault();
+                        if (dragging !== undefined) event.preventDefault();
                       }}
                       onDrop={moveItem}
                     >
@@ -317,7 +317,7 @@ const Roadmap = ({ identifier, onClose }) => {
                               onDragStart={(event) => {
                                 // for Firefox
                                 event.dataTransfer.setData('text/plain', '');
-                                setDragging(name);
+                                setDragging(index);
                               }}
                               onDragEnd={() => {
                                 setDragging(undefined);
