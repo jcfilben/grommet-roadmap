@@ -7,6 +7,7 @@ import {
   Form,
   FormField,
   Header,
+  Heading,
   Layer,
   TextArea,
   TextInput,
@@ -14,8 +15,16 @@ import {
 import { Close } from 'grommet-icons';
 import { update } from './data';
 import Auth from './Auth';
+import {
+  AddCircle,
+  Figma,
+  FormClose,
+  FormDown,
+  Github,
+  Link,
+} from 'grommet-icons';
 
-const defaultItem = { name: '', section: '', target: '', status: '', url: '' };
+const defaultItem = { name: '', section: '', target: '', status: '' };
 
 const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
   const [value, setValue] = useState(
@@ -24,7 +33,17 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
   const [changing, setChanging] = useState();
   const [auth, setAuth] = useState();
 
+  const [linkFields, setLinkFields] = useState(
+    index >= 0 ? roadmap.items[index].linkFields : [{ linkUrl: '' }],
+  );
+
   const submit = (password) => {
+    // remove empty link fields
+    for (let i = 0; i < linkFields.length; i++) {
+      if (linkFields[i].linkUrl === '') linkFields.splice(i, 1);
+    }
+    value.linkFields = JSON.parse(JSON.stringify(linkFields));
+
     setChanging(true);
     setAuth(false);
 
@@ -32,9 +51,11 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     const nextItem = { ...value };
     delete nextItem.index;
     if (nextItem.status === 'none') delete nextItem.status;
-    if (!nextItem.url) delete nextItem.url;
+    // if (!nextItem.linkFields) delete nextItem.linkFields;
     if (!nextItem.section) delete nextItem.section;
     if (!nextItem.label) delete nextItem.label;
+    if (!nextItem.progress) delete nextItem.progress;
+    // if (!nextItem.date) delete nextItem.date;
     if (index >= 0) nextRoadmap.items[index] = nextItem;
     else nextRoadmap.items.unshift(nextItem);
     // add section, if needed
@@ -62,13 +83,72 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
       });
   };
 
+  if (Object.keys(roadmap.labels).length === 0) {
+    roadmap.labels = [
+      { name: 'Exploration', color: 'purple' },
+      { name: 'Implement', color: 'green' },
+      { name: 'Ideate', color: 'blue' },
+    ];
+  }
+
+  const handleAddFields = () => {
+    const links = [...linkFields];
+    links.push({ linkUrl: '' });
+    setLinkFields(links);
+  };
+
+  const handleRemoveFields = (index) => {
+    const links = [...linkFields];
+    links.splice(index, 1);
+    setLinkFields(links);
+    value[index + 'linkUrl'] = '';
+  };
+
+  const handleInputChange = (index, event) => {
+    const values = [...linkFields];
+    if (event.target.name.includes('linkUrl')) {
+      values[index].linkUrl = event.target.value;
+    }
+    console.log(values);
+    setLinkFields(values);
+  };
+
+  // const selectOptions = ["Exploration", "Ideate", "Implement"];
+
+  // const updateCreateOption = (text) => {
+  //   const len = selectOptions.length;
+  //   if (selectOptions[len - 1].includes("Create '")) {
+  //     // remove Create option before adding an updated one
+  //     selectOptions.pop();
+  //   }
+  //   selectOptions.push(`Create '${text}'`);
+  // };
+
+  // const getRegExp = text => {
+  //   // The line below escapes regular expression special characters:
+  //   // [ \ ^ $ . | ? * + ( )
+  //   const escapedText = text.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
+
+  //   // Create the regular expression with modified value which
+  //   // handles escaping special characters. Without escaping special
+  //   // characters, errors will appear in the console
+  //   return new RegExp(escapedText, 'i');
+  // };
+
+  // const [options, setOptions] = useState(selectOptions);
+  // const [searchValue, setSearchValue] = useState('');
+  // const [selectValue, setSelectValue] = useState('');
+
   return (
     <Layer position="center" onEsc={onDone}>
       <Box>
-        <Header justify="end">
-          <Button icon={<Close />} onClick={onDone} />
-        </Header>
         <Box pad={{ horizontal: 'large', vertical: 'small' }} width="large">
+          <Header>
+            <Heading level={2} size="small">
+              {index >= 0 ? 'Edit Task' : 'Create a New Task'}
+            </Heading>
+            <Button icon={<Close />} onClick={onDone} />
+          </Header>
           {auth ? (
             <Auth onChange={submit} />
           ) : (
@@ -78,13 +158,15 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                 align="start"
                 justify="between"
                 gap="small"
-                margin={{ bottom: 'medium' }}
+                margin={{ bottom: 'small' }}
               >
                 <FormField name="section" htmlFor="section" margin="none">
                   <TextInput
+                    icon={<FormDown />}
+                    reverse
                     name="section"
                     id="section"
-                    placeholder="Section"
+                    placeholder="Template"
                     suggestions={roadmap.sections}
                   />
                 </FormField>
@@ -94,36 +176,110 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                   required
                   margin="none"
                 >
-                  <DateInput name="target" id="target" format="mm/dd/yyyy" />
+                  <DateInput
+                    name="target"
+                    id="target"
+                    format="mm/dd/yyyy"
+                    placeholder="Date"
+                  />
                 </FormField>
-                <FormField name="label" htmlFor="label" margin="none">
+                <FormField name="progress" htmlFor="progress" margin="none">
                   <TextInput
-                    name="label"
-                    id="label"
-                    placeholder="Label"
-                    suggestions={roadmap.labels.map(({ name }) => name)}
+                    icon={<FormDown />}
+                    reverse
+                    name="progress"
+                    id="progress"
+                    placeholder="Progress"
+                    suggestions={['Not Started', 'In Progress', 'Complete']}
                   />
                 </FormField>
               </Box>
               <FormField name="name" htmlFor="name" required>
-                <TextInput
-                  name="name"
-                  id="name"
-                  size="large"
-                  placeholder="Label"
-                />
+                <TextInput name="name" id="name" placeholder="Title" />
               </FormField>
+              <FormField name="label" htmlFor="label">
+                <TextInput
+                  icon={<FormDown />}
+                  reverse
+                  name="label"
+                  id="label"
+                  placeholder="Design Stage"
+                  suggestions={roadmap.labels.map(({ name }) => name)}
+                />
+                {/* <Select
+                  icon={<FormDown/>}
+                  reverse
+                  name="label"
+                  id="label"
+                  placeholder="Design Stage"
+                  value={selectValue}
+                  options={options}
+                  onChange={({ option }) => {
+                    if (option.includes("Create '")) {
+                      selectOptions.pop(); // remove Create option
+                      selectOptions.push(searchValue);
+                      setSelectValue(searchValue);
+                    } else {
+                      setSelectValue(option);
+                    }
+                  }}
+                  onClose={() => setOptions(selectOptions)}
+                  onSearch={(text) => {
+                    updateCreateOption(text);
+                    const exp = getRegExp(text);
+                    setOptions(selectOptions.filter(o => exp.test(o)));
+                    setSearchValue(text);
+                  }}
+                /> */}
+              </FormField>
+              {linkFields.map((linkField, index) => (
+                <Box direction="row" key={`${linkField}~${index}`}>
+                  <FormField
+                    fill="horizontal"
+                    name={`${index}linkUrl`}
+                    htmlFor={`${index}linkUrl`}
+                  >
+                    <TextInput
+                      onChange={(event) => handleInputChange(index, event)}
+                      name={`${index}linkUrl`}
+                      id={`${index}linkUrl`}
+                      placeholder="URL"
+                    />
+                  </FormField>
+                  <Box
+                    align="end"
+                    width="40px"
+                    margin={{ left: 'small', vertical: 'xsmall' }}
+                    border="all"
+                    round="4px"
+                  >
+                    <Box align="center" pad="xsmall">
+                      {linkField.linkUrl &&
+                        (linkField.linkUrl.includes('figma.com') ? (
+                          <Figma color="plain" />
+                        ) : linkField.linkUrl.includes('github.com') ? (
+                          <Github />
+                        ) : (
+                          <Link />
+                        ))}
+                    </Box>
+                  </Box>
+                  <Box alignContent="center">
+                    <FormClose onClick={() => handleRemoveFields(index)} />
+                  </Box>
+                </Box>
+              ))}
+              <Box align="center" onClick={() => handleAddFields()}>
+                <AddCircle color="border" />
+              </Box>
               <FormField
                 name="note"
                 htmlFor="note"
                 margin={{ bottom: 'medium' }}
               >
-                <TextArea name="note" id="note" placeholder="Note" />
+                <TextArea name="note" id="note" placeholder="Notes" />
               </FormField>
 
-              <FormField name="url" htmlFor="url">
-                <TextInput name="url" id="url" placeholder="URL" />
-              </FormField>
               <Footer margin={{ vertical: 'medium' }}>
                 <Button
                   type="submit"

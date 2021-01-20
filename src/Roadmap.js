@@ -20,7 +20,18 @@ import {
   Text,
   ThemeContext,
 } from 'grommet';
-import { Add, Blank, Navigate, Next, Previous, Share } from 'grommet-icons';
+import {
+  Add,
+  AddCircle,
+  Blank,
+  Figma,
+  Github,
+  Link,
+  More,
+  Navigate,
+  Next,
+  Previous,
+} from 'grommet-icons';
 import { grommet } from 'grommet/themes';
 import { hpe } from 'grommet-theme-hpe';
 import { addMonths, sameMonth, subtractMonths } from './utils';
@@ -38,13 +49,13 @@ const themes = {
 const monthCounts = {
   small: 1,
   medium: 3,
-  large: 5,
+  large: 4,
 };
 
 const columnPercents = {
   small: 'full',
   medium: '33.33%',
-  large: '20%',
+  large: '25%',
 };
 
 const now = new Date();
@@ -134,7 +145,7 @@ const Roadmap = ({ identifier, onClose }) => {
       <Grid
         columns={[
           'flex',
-          ['small', responsive === 'medium' ? 'large' : '80vw'],
+          ['small', responsive === 'medium' ? 'xlarge' : '80vw'],
           'flex',
         ]}
       >
@@ -209,7 +220,7 @@ const Roadmap = ({ identifier, onClose }) => {
           background={editing ? { color: 'background-contrast' } : undefined}
           gap="small"
         >
-          <Header background={{ color: 'background', dark: true }} pad="small">
+          <Header background={{ color: 'background-contrast' }} pad="small">
             <Button icon={<Navigate />} onClick={onClose} />
             <Heading textAlign="center" size="24px" margin="none">
               {editing ? (
@@ -227,10 +238,11 @@ const Roadmap = ({ identifier, onClose }) => {
               <Blank />
             )}
           </Header>
-          <Box flex={false} margin={{ top: 'medium' }}>
+          <Box flex={false}>
             <Row>
               {months.map((month, index) => (
                 <Box
+                  // background="green"
                   key={month}
                   direction="row"
                   align="center"
@@ -245,12 +257,12 @@ const Roadmap = ({ identifier, onClose }) => {
                   ) : (
                     <Blank />
                   )}
-                  <Text>
+                  <Heading level={4} size="large">
                     {month.toLocaleString(undefined, {
                       month: 'long',
                       year: 'numeric',
                     })}
-                  </Text>
+                  </Heading>
                   {index === months.length - 1 ? (
                     <Button icon={<Next />} hoverIndicator onClick={onNext} />
                   ) : (
@@ -267,7 +279,7 @@ const Roadmap = ({ identifier, onClose }) => {
                   <Heading
                     level={3}
                     size="18px"
-                    color="text-weak"
+                    // color="text-weak"
                     margin={{
                       top: 'small',
                       bottom: 'small',
@@ -278,15 +290,20 @@ const Roadmap = ({ identifier, onClose }) => {
                   </Heading>
                 </Row>
                 <Row>
-                  {months.map(({ month, items }) => (
+                  {months.map(({ month, items }, index) => (
                     <Box
                       key={month}
                       gap="medium"
                       pad={{ vertical: 'medium', horizontal: 'small' }}
                       background={
-                        dragging !== undefined && dropTarget !== month
+                        // index%2 === 0 ? 'light-1' : 'light-2'
+                        index % 2 === 0
                           ? 'background-contrast'
                           : 'background-back'
+                        // index%2 === 0 ? 'graph-1' : 'graph-2'
+                        // dragging !== undefined && dropTarget !== month
+                        //   ? 'background-contrast'
+                        //   : 'background-back'
                       }
                       responsive={false}
                       onDragEnter={(event) => {
@@ -303,7 +320,18 @@ const Roadmap = ({ identifier, onClose }) => {
                       onDrop={moveItem}
                     >
                       {items.map(
-                        ({ index, label: labelName, name, note, url }) => {
+                        ({
+                          index,
+                          label: labelName,
+                          linkFields,
+                          name,
+                          progress,
+                          target,
+                        }) => {
+                          const daysRemaining = Math.round(
+                            (new Date(target) - new Date()) /
+                              (1000 * 60 * 60 * 24),
+                          );
                           const label =
                             labelName &&
                             roadmap.labels &&
@@ -323,24 +351,115 @@ const Roadmap = ({ identifier, onClose }) => {
                                 setDragging(undefined);
                                 setDropTarget(undefined);
                               }}
+                              elevation="small"
                             >
-                              <CardHeader>
-                                <Text weight="bold">{name}</Text>
-                                {url && <Share size="small" />}
-                              </CardHeader>
-                              {note && <CardBody>{note}</CardBody>}
+                              <Box
+                                fill="horizontal"
+                                align="end"
+                                pad={{
+                                  top: 'xsmall',
+                                  bottom: 'xsmall',
+                                  horizontal: 'medium',
+                                }}
+                              >
+                                <Button
+                                  plain
+                                  icon={<More color="border" />}
+                                  onClick={() => setItemIndex(index)}
+                                />
+                              </Box>
+                              <Box
+                                justify="between"
+                                direction="row"
+                                overflow="scroll"
+                              >
+                                <CardHeader
+                                  wrap={true}
+                                  pad={{
+                                    top: 'none',
+                                    bottom: 'medium',
+                                    horizontal: 'medium',
+                                  }}
+                                  justify="start"
+                                  gap="none"
+                                  align="start"
+                                  direction="column"
+                                >
+                                  <Heading margin="none" size="small" level={4}>
+                                    {name}
+                                  </Heading>
+                                  <Text size="small">
+                                    {daysRemaining >= 0
+                                      ? `${daysRemaining} days remaining`
+                                      : `${daysRemaining * -1} days ago`}
+                                  </Text>
+                                </CardHeader>
+                                <CardBody
+                                  flex={false}
+                                  pad={{
+                                    top: 'none',
+                                    bottom: 'medium',
+                                    horizontal: 'medium',
+                                  }}
+                                  gap="small"
+                                >
+                                  {linkFields.map((linkField, index) => (
+                                    <Box key={`iconBox${index}`} align="center">
+                                      {linkField.linkUrl &&
+                                        (linkField.linkUrl.includes(
+                                          'figma.com',
+                                        ) ||
+                                        linkField.linkUrl.includes(
+                                          'github.com',
+                                        ) ? (
+                                          linkField.linkUrl.includes(
+                                            'github.com',
+                                          ) ? (
+                                            <Button
+                                              plain
+                                              icon={<Github />}
+                                              href={linkField.linkUrl}
+                                            />
+                                          ) : (
+                                            <Button
+                                              plain
+                                              icon={<Figma color="plain" />}
+                                              href={linkField.linkUrl}
+                                            />
+                                          )
+                                        ) : (
+                                          <Button
+                                            plain
+                                            icon={<Link />}
+                                            href={linkField.linkUrl}
+                                          />
+                                        ))}
+                                    </Box>
+                                  ))}
+                                </CardBody>
+                              </Box>
                               {label && (
-                                <CardFooter background={label.color}>
-                                  <Text size="small">{label.name}</Text>
+                                <CardFooter
+                                  pad={{
+                                    vertical: 'small',
+                                    horizontal: 'medium',
+                                  }}
+                                  background={label.color}
+                                >
+                                  <Text size="small" weight="bold">
+                                    {label.name}
+                                  </Text>
+                                  <Text size="small" weight="bold">
+                                    {progress}
+                                  </Text>
                                 </CardFooter>
                               )}
                             </Card>
                           );
-                          if (editing || url)
+                          if (editing)
                             content = (
                               <Button
                                 key={name}
-                                href={editing ? undefined : url}
                                 plain
                                 onClick={
                                   editing
@@ -353,6 +472,16 @@ const Roadmap = ({ identifier, onClose }) => {
                             );
                           return content;
                         },
+                      )}
+                      {editing ? (
+                        <Button
+                          icon={<AddCircle pad="small" color="border" />}
+                          onClick={() => setItemIndex(-1)}
+                          secondary
+                          color="border"
+                        />
+                      ) : (
+                        <Blank />
                       )}
                     </Box>
                   ))}
