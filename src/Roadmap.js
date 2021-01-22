@@ -130,7 +130,7 @@ const Roadmap = ({ identifier, onClose }) => {
             ),
           })),
         }))
-        .filter((s) => s.months.some((m) => m.items.length) && s.name != '');
+        .filter((s) => s.months.some((m) => m.items.length) && s.name !== '');
       // add any non-section items
       const nonSectionItems = monthsItems.filter(({ section }) => !section);
       if (nonSectionItems.length) {
