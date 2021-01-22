@@ -16,6 +16,7 @@ import {
   Header,
   Heading,
   Keyboard,
+  Markdown,
   ResponsiveContext,
   Text,
   ThemeContext,
@@ -24,6 +25,7 @@ import {
   Add,
   AddCircle,
   Blank,
+  CircleInformation,
   Figma,
   Github,
   Link,
@@ -72,6 +74,8 @@ const Roadmap = ({ identifier, onClose }) => {
   const [itemIndex, setItemIndex] = useState();
   const [dragging, setDragging] = React.useState();
   const [dropTarget, setDropTarget] = React.useState();
+  const [prevTarget, setPrevTarget] = React.useState();
+  const [showNotes, setShowNotes] = useState(false);
 
   useEffect(() => {
     get(password ? { ...identifier, password } : identifier)
@@ -108,8 +112,13 @@ const Roadmap = ({ identifier, onClose }) => {
   const sections = useMemo(() => {
     let result = [];
     if (roadmap) {
-      const monthsItems = items.filter(({ target }) =>
-        months.some((month) => sameMonth(month, target)),
+      // const monthsItems = items.filter(({ target }) =>
+      //   months.some((month) => sameMonth(month, target)),
+      // );
+      const monthsItems = items.filter(({ dateFields }) =>
+        months.some((month) =>
+          dateFields.some((dateField) => sameMonth(month, dateField.date)),
+        ),
       );
       result = roadmap.sections
         .map((name) => ({
@@ -117,8 +126,13 @@ const Roadmap = ({ identifier, onClose }) => {
           months: months.map((month) => ({
             month,
             items: monthsItems.filter(
-              ({ section, target }) =>
-                name === section && sameMonth(month, target),
+              // ({ section, target }) =>
+              //   name === section && sameMonth(month, target),
+              ({ section, dateFields }) =>
+                dateFields.some(
+                  (dateField) =>
+                    name === section && sameMonth(month, dateField.date),
+                ),
             ),
           })),
         }))
@@ -129,8 +143,8 @@ const Roadmap = ({ identifier, onClose }) => {
         result.push({
           months: months.map((month) => ({
             month,
-            items: nonSectionItems.filter(({ target }) =>
-              sameMonth(month, target),
+            items: nonSectionItems.filter(({ dateFields }) =>
+              dateFields.some((dateField) => sameMonth(month, dateField.date)),
             ),
           })),
         });
@@ -165,11 +179,20 @@ const Roadmap = ({ identifier, onClose }) => {
     (event) => {
       const nextRoadmap = JSON.parse(JSON.stringify(roadmap));
       const nextItem = nextRoadmap.items.find((_, index) => index === dragging);
-      nextItem.target = dropTarget.toISOString();
+      for (var x in nextItem.dateFields) {
+        if (
+          !sameMonth(nextItem.dateFields[x].date, dropTarget.toISOString()) &&
+          sameMonth(nextItem.dateFields[x].date, prevTarget.toISOString())
+        ) {
+          nextItem.dateFields[x].date = dropTarget.toISOString();
+          nextItem[`${x}DateTarget`] = nextItem.dateFields[x].date;
+        }
+      }
       event.dataTransfer.clearData();
       setRoadmap(nextRoadmap);
       setDragging(undefined);
       setDropTarget(undefined);
+      setPrevTarget(undefined);
       update(nextRoadmap, password)
         .then(() => {
           // ???
@@ -178,7 +201,7 @@ const Roadmap = ({ identifier, onClose }) => {
           if (status === 401) setAuth(true);
         });
     },
-    [dragging, dropTarget, password, roadmap],
+    [dragging, dropTarget, prevTarget, password, roadmap],
   );
 
   if (auth)
@@ -234,11 +257,31 @@ const Roadmap = ({ identifier, onClose }) => {
             </Heading>
             {editing ? (
               <Button icon={<Add />} onClick={() => setItemIndex(-1)} />
+            ) : roadmap.notes ? (
+              <Button
+                icon={<CircleInformation />}
+                onClick={() => setShowNotes(!showNotes)}
+              />
             ) : (
               <Blank />
             )}
           </Header>
           <Box flex={false}>
+            {showNotes && (
+              <Grid
+                columns={[
+                  'flex',
+                  ['small', responsive === 'medium' ? 'xlarge' : '80vw'],
+                  'flex',
+                ]}
+              >
+                <Box />
+                <Box pad="small" fill>
+                  <Markdown>{roadmap.notes}</Markdown>
+                </Box>
+                <Box />
+              </Grid>
+            )}
             <Row>
               {months.map((month, index) => (
                 <Box
@@ -321,23 +364,43 @@ const Roadmap = ({ identifier, onClose }) => {
                     >
                       {items.map(
                         ({
+                          dateFields,
                           index,
                           label: labelName,
                           linkFields,
                           name,
+                          note,
                           progress,
                           target,
                         }) => {
-                          const daysRemaining = Math.round(
-                            (new Date(target) - new Date()) /
-                              (1000 * 60 * 60 * 24),
-                          );
-                          const label =
-                            labelName &&
-                            roadmap.labels &&
-                            roadmap.labels.find(
-                              ({ name }) => name === labelName,
+                          // console.log(labelName);
+                          // const daysRemaining = Math.round(
+                          //   (new Date(target) - new Date()) /
+                          //     (1000 * 60 * 60 * 24),
+                          // );
+                          const labels = [];
+                          for (var x in dateFields) {
+                            const stage = dateFields[x].stage;
+                            labels.push(
+                              roadmap.labels.find(({ name }) => name === stage),
                             );
+                          }
+                          // const label =
+                          //   labelName &&
+                          //   roadmap.labels &&
+                          //   roadmap.labels.find(
+                          //     ({ name }) => name === labelName,
+                          //   );
+                          // const labels = dateFields.some((dateField) => {
+                          //   // dateFields.some((dateField) => sameMonth(month, dateField.date))),
+                          //   // console.log(dateField);
+                          //   dateField.stage && roadmap.labels &&
+                          //   roadmap.labels.find(
+                          //     ({ name }) => name === dateField.stage
+                          //   )
+                          // }
+                          // );
+                          // console.log(labels);
                           let content = (
                             <Card
                               key={name}
@@ -346,10 +409,12 @@ const Roadmap = ({ identifier, onClose }) => {
                                 // for Firefox
                                 event.dataTransfer.setData('text/plain', '');
                                 setDragging(index);
+                                setPrevTarget(month);
                               }}
                               onDragEnd={() => {
                                 setDragging(undefined);
                                 setDropTarget(undefined);
+                                setPrevTarget(undefined);
                               }}
                               elevation="small"
                             >
@@ -388,11 +453,12 @@ const Roadmap = ({ identifier, onClose }) => {
                                   <Heading margin="none" size="small" level={4}>
                                     {name}
                                   </Heading>
-                                  <Text size="small">
+                                  {/* <Text size="small">
                                     {daysRemaining >= 0
                                       ? `${daysRemaining} days remaining`
                                       : `${daysRemaining * -1} days ago`}
-                                  </Text>
+                                  </Text> */}
+                                  <Text>{note}</Text>
                                 </CardHeader>
                                 <CardBody
                                   flex={false}
@@ -438,22 +504,40 @@ const Roadmap = ({ identifier, onClose }) => {
                                   ))}
                                 </CardBody>
                               </Box>
-                              {label && (
-                                <CardFooter
-                                  pad={{
-                                    vertical: 'small',
-                                    horizontal: 'medium',
-                                  }}
-                                  background={label.color}
-                                >
-                                  <Text size="small" weight="bold">
-                                    {label.name}
-                                  </Text>
-                                  <Text size="small" weight="bold">
-                                    {progress}
-                                  </Text>
-                                </CardFooter>
-                              )}
+                              {dateFields.map((dateField, index) => {
+                                if (sameMonth(month, dateField.date)) {
+                                  return (
+                                    <CardFooter
+                                      pad={{
+                                        vertical: 'small',
+                                        horizontal: 'medium',
+                                      }}
+                                      background={
+                                        labels[index] && labels[index].color
+                                          ? labels[index].color
+                                          : ''
+                                      }
+                                      key={`${index}footer`}
+                                    >
+                                      <Text
+                                        size="small"
+                                        weight="bold"
+                                        key={`${index}stage`}
+                                      >
+                                        {dateField.stage}
+                                      </Text>
+                                      <Text
+                                        size="small"
+                                        weight="bold"
+                                        key={`${index}progress`}
+                                      >
+                                        {dateField.progress}
+                                      </Text>
+                                    </CardFooter>
+                                  );
+                                }
+                                return null;
+                              })}
                             </Card>
                           );
                           if (editing)

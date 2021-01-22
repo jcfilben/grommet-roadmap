@@ -24,7 +24,7 @@ import {
   Link,
 } from 'grommet-icons';
 
-const defaultItem = { name: '', section: '', target: '', status: '' };
+const defaultItem = { name: '', section: '' };
 
 const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
   const [value, setValue] = useState(
@@ -37,12 +37,26 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     index >= 0 ? roadmap.items[index].linkFields : [{ linkUrl: '' }],
   );
 
+  const [dateFields, setDateFields] = useState(
+    index >= 0
+      ? roadmap.items[index].dateFields
+      : [{ date: '', stage: '', progress: '' }],
+  );
+
   const submit = (password) => {
     // remove empty link fields
     for (let i = 0; i < linkFields.length; i++) {
+      delete value[`${i}DateProgress`];
+      delete value[`${i}DateStage`];
+      // delete value[`${i}DateTarget`];
       if (linkFields[i].linkUrl === '') linkFields.splice(i, 1);
     }
+    for (let i = 0; i < dateFields.length; i++) {
+      delete value[`${i}linkUrl`];
+      if (dateFields[i].date === '') linkFields.splice(i, 1);
+    }
     value.linkFields = JSON.parse(JSON.stringify(linkFields));
+    value.dateFields = JSON.parse(JSON.stringify(dateFields));
 
     setChanging(true);
     setAuth(false);
@@ -50,11 +64,12 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     const nextRoadmap = JSON.parse(JSON.stringify(roadmap));
     const nextItem = { ...value };
     delete nextItem.index;
-    if (nextItem.status === 'none') delete nextItem.status;
+    console.log(nextItem);
+    // if (nextItem.status === 'none') delete nextItem.status;
     // if (!nextItem.linkFields) delete nextItem.linkFields;
     if (!nextItem.section) delete nextItem.section;
-    if (!nextItem.label) delete nextItem.label;
-    if (!nextItem.progress) delete nextItem.progress;
+    // if (!nextItem.label) delete nextItem.label;
+    // if (!nextItem.progress) delete nextItem.progress;
     // if (!nextItem.date) delete nextItem.date;
     if (index >= 0) nextRoadmap.items[index] = nextItem;
     else nextRoadmap.items.unshift(nextItem);
@@ -66,10 +81,15 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
       nextRoadmap.sections.push(nextItem.section);
     }
     // add label, if needed
-    if (!nextRoadmap.labels.find(({ name }) => name === nextItem.label)) {
-      nextRoadmap.labels.push({ name: nextItem.label });
-    }
-
+    for (let x in dateFields)
+      if (
+        !nextRoadmap.labels.find(
+          ({ name }) => name === nextItem.dateFields[x].stage,
+        )
+      ) {
+        nextRoadmap.labels.push({ name: nextItem.dateFields[x].stage });
+      }
+    console.log(nextItem);
     update(nextRoadmap, password)
       .then(() => {
         setChanging(false);
@@ -91,13 +111,13 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     ];
   }
 
-  const handleAddFields = () => {
+  const handleAddUrl = () => {
     const links = [...linkFields];
     links.push({ linkUrl: '' });
     setLinkFields(links);
   };
 
-  const handleRemoveFields = (index) => {
+  const handleRemoveUrl = (index) => {
     const links = [...linkFields];
     links.splice(index, 1);
     setLinkFields(links);
@@ -109,8 +129,49 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     if (event.target.name.includes('linkUrl')) {
       values[index].linkUrl = event.target.value;
     }
-    console.log(values);
+    // console.log(values);
     setLinkFields(values);
+  };
+
+  const handleRemoveDateField = (index) => {
+    const links = [...dateFields];
+    links.splice(index, 1);
+    setDateFields(links);
+    // value[index + 'linkUrl'] = '';
+  };
+
+  const handleAddDateField = () => {
+    const links = [...dateFields];
+    links.push({ date: '', stage: '', progress: '' });
+    setDateFields(links);
+  };
+
+  const handleDateInputChange = (index, event) => {
+    const values = [...dateFields];
+    if (event.value !== '') values[index].date = event.value;
+    setDateFields(values);
+  };
+
+  const handleSuggestionSelect = (index, event) => {
+    const values = [...dateFields];
+
+    if (event.target.name && event.target.name.includes('Stage')) {
+      values[index].stage = event.suggestion;
+    } else if (event.target.name && event.target.name.includes('Progress')) {
+      values[index].progress = event.suggestion;
+    }
+    setDateFields(values);
+  };
+
+  const handleOtherInputChange = (index, event) => {
+    const values = [...dateFields];
+
+    if (event.target.name && event.target.name.includes('Stage')) {
+      values[index].stage = event.target.value;
+    } else if (event.target.name && event.target.name.includes('Progress')) {
+      values[index].progress = event.target.value;
+    }
+    setDateFields(values);
   };
 
   // const selectOptions = ["Exploration", "Ideate", "Implement"];
@@ -153,84 +214,25 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
             <Auth onChange={submit} />
           ) : (
             <Form value={value} onChange={setValue} onSubmit={() => submit()}>
-              <Box
-                direction="row-responsive"
-                align="start"
-                justify="between"
-                gap="small"
-                margin={{ bottom: 'small' }}
-              >
-                <FormField name="section" htmlFor="section" margin="none">
-                  <TextInput
-                    icon={<FormDown />}
-                    reverse
-                    name="section"
-                    id="section"
-                    placeholder="Template"
-                    suggestions={roadmap.sections}
-                  />
-                </FormField>
-                <FormField
-                  name="target"
-                  htmlFor="target"
-                  required
-                  margin="none"
-                >
-                  <DateInput
-                    name="target"
-                    id="target"
-                    format="mm/dd/yyyy"
-                    placeholder="Date"
-                  />
-                </FormField>
-                <FormField name="progress" htmlFor="progress" margin="none">
-                  <TextInput
-                    icon={<FormDown />}
-                    reverse
-                    name="progress"
-                    id="progress"
-                    placeholder="Progress"
-                    suggestions={['Not Started', 'In Progress', 'Complete']}
-                  />
-                </FormField>
-              </Box>
-              <FormField name="name" htmlFor="name" required>
-                <TextInput name="name" id="name" placeholder="Title" />
-              </FormField>
-              <FormField name="label" htmlFor="label">
+              <FormField name="section" htmlFor="section" margin="none">
                 <TextInput
                   icon={<FormDown />}
                   reverse
-                  name="label"
-                  id="label"
-                  placeholder="Design Stage"
-                  suggestions={roadmap.labels.map(({ name }) => name)}
+                  name="section"
+                  id="section"
+                  placeholder="Template"
+                  suggestions={roadmap.sections}
                 />
-                {/* <Select
-                  icon={<FormDown/>}
-                  reverse
-                  name="label"
-                  id="label"
-                  placeholder="Design Stage"
-                  value={selectValue}
-                  options={options}
-                  onChange={({ option }) => {
-                    if (option.includes("Create '")) {
-                      selectOptions.pop(); // remove Create option
-                      selectOptions.push(searchValue);
-                      setSelectValue(searchValue);
-                    } else {
-                      setSelectValue(option);
-                    }
-                  }}
-                  onClose={() => setOptions(selectOptions)}
-                  onSearch={(text) => {
-                    updateCreateOption(text);
-                    const exp = getRegExp(text);
-                    setOptions(selectOptions.filter(o => exp.test(o)));
-                    setSearchValue(text);
-                  }}
-                /> */}
+              </FormField>
+              <FormField name="name" htmlFor="name" required>
+                <TextInput name="name" id="name" placeholder="Title" />
+              </FormField>
+              <FormField
+                name="note"
+                htmlFor="note"
+                margin={{ bottom: 'medium' }}
+              >
+                <TextArea name="note" id="note" placeholder="Notes" />
               </FormField>
               {linkFields.map((linkField, index) => (
                 <Box direction="row" key={`${linkField}~${index}`}>
@@ -249,7 +251,7 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                   <Box
                     align="end"
                     width="40px"
-                    margin={{ left: 'small', vertical: 'xsmall' }}
+                    margin={{ horizontal: 'small', vertical: 'xsmall' }}
                     border="all"
                     round="4px"
                   >
@@ -265,20 +267,87 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                     </Box>
                   </Box>
                   <Box alignContent="center">
-                    <FormClose onClick={() => handleRemoveFields(index)} />
+                    <FormClose onClick={() => handleRemoveUrl(index)} />
                   </Box>
                 </Box>
               ))}
-              <Box align="center" onClick={() => handleAddFields()}>
+              <Box align="center" onClick={() => handleAddUrl()}>
                 <AddCircle color="border" />
               </Box>
-              <FormField
-                name="note"
-                htmlFor="note"
-                margin={{ bottom: 'medium' }}
-              >
-                <TextArea name="note" id="note" placeholder="Notes" />
-              </FormField>
+              {dateFields.map((dateField, index) => (
+                <Box
+                  direction="row-responsive"
+                  align="start"
+                  justify="between"
+                  gap="small"
+                  key={`${dateField}~${index}`}
+                  margin={{ bottom: 'small' }}
+                >
+                  <FormField
+                    name={`${index}DateTarget`}
+                    htmlFor={`${index}DateTarget`}
+                    // name="target"
+                    // htmlFor="target"
+                    required
+                    margin="none"
+                  >
+                    <DateInput
+                      onChange={(event) => handleDateInputChange(index, event)}
+                      name={`${index}DateTarget`}
+                      htmlFor={`${index}DateTarget`}
+                      // name="target"
+                      // id="target"
+                      format="mm/dd/yyyy"
+                      placeholder="Date"
+                    />
+                  </FormField>
+                  <FormField
+                    name={`${index}DateStage`}
+                    htmlFor={`${index}DateStage`}
+                  >
+                    <TextInput
+                      onChange={(event) => handleOtherInputChange(index, event)}
+                      onSuggestionSelect={(event) =>
+                        handleSuggestionSelect(index, event)
+                      }
+                      name={`${index}DateStage`}
+                      htmlFor={`${index}DateStage`}
+                      icon={<FormDown />}
+                      reverse
+                      // name="label"
+                      // id="label"
+                      placeholder="Design Stage"
+                      suggestions={roadmap.labels.map(({ name }) => name)}
+                    />
+                  </FormField>
+                  <FormField
+                    name={`${index}DateProgress`}
+                    htmlFor={`${index}DateProgress`}
+                    margin="none"
+                  >
+                    <TextInput
+                      onChange={(event) => handleOtherInputChange(index, event)}
+                      onSuggestionSelect={(event) =>
+                        handleSuggestionSelect(index, event)
+                      }
+                      icon={<FormDown />}
+                      reverse
+                      name={`${index}DateProgress`}
+                      htmlFor={`${index}DateProgress`}
+                      // name="progress"
+                      // id="progress"
+                      placeholder="Progress"
+                      suggestions={['Not Started', 'In Progress', 'Complete']}
+                    />
+                  </FormField>
+                  <Box alignContent="center">
+                    <FormClose onClick={() => handleRemoveDateField(index)} />
+                  </Box>
+                </Box>
+              ))}
+              <Box align="center" onClick={() => handleAddDateField()}>
+                <AddCircle color="border" />
+              </Box>
 
               <Footer margin={{ vertical: 'medium' }}>
                 <Button
