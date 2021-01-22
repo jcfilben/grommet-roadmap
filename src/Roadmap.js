@@ -130,7 +130,7 @@ const Roadmap = ({ identifier, onClose }) => {
             ),
           })),
         }))
-        .filter((s) => s.months.some((m) => m.items.length));
+        .filter((s) => s.months.some((m) => m.items.length) && s.name != '');
       // add any non-section items
       const nonSectionItems = monthsItems.filter(({ section }) => !section);
       if (nonSectionItems.length) {
@@ -416,7 +416,7 @@ const Roadmap = ({ identifier, onClose }) => {
                                   <Heading margin="none" size="small" level={4}>
                                     {name}
                                   </Heading>
-                                  <Text>{note}</Text>
+                                  <Text size="small">{note}</Text>
                                 </CardHeader>
                                 <CardBody
                                   flex={false}
