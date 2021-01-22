@@ -34,11 +34,13 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
   const [auth, setAuth] = useState();
 
   const [linkFields, setLinkFields] = useState(
-    index >= 0 ? roadmap.items[index].linkFields : [{ linkUrl: '' }],
+    index >= 0 && roadmap.items.length !== 0
+      ? roadmap.items[index].linkFields
+      : [{ linkUrl: '' }],
   );
 
   const [dateFields, setDateFields] = useState(
-    index >= 0
+    index >= 0 && roadmap.items.length !== 0
       ? roadmap.items[index].dateFields
       : [{ date: '', stage: '', progress: '' }],
   );
@@ -48,7 +50,6 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     for (let i = 0; i < linkFields.length; i++) {
       delete value[`${i}DateProgress`];
       delete value[`${i}DateStage`];
-      // delete value[`${i}DateTarget`];
       if (linkFields[i].linkUrl === '') linkFields.splice(i, 1);
     }
     for (let i = 0; i < dateFields.length; i++) {
@@ -64,13 +65,7 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     const nextRoadmap = JSON.parse(JSON.stringify(roadmap));
     const nextItem = { ...value };
     delete nextItem.index;
-    console.log(nextItem);
-    // if (nextItem.status === 'none') delete nextItem.status;
-    // if (!nextItem.linkFields) delete nextItem.linkFields;
     if (!nextItem.section) delete nextItem.section;
-    // if (!nextItem.label) delete nextItem.label;
-    // if (!nextItem.progress) delete nextItem.progress;
-    // if (!nextItem.date) delete nextItem.date;
     if (index >= 0) nextRoadmap.items[index] = nextItem;
     else nextRoadmap.items.unshift(nextItem);
     // add section, if needed
@@ -89,7 +84,6 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
       ) {
         nextRoadmap.labels.push({ name: nextItem.dateFields[x].stage });
       }
-    console.log(nextItem);
     update(nextRoadmap, password)
       .then(() => {
         setChanging(false);
@@ -129,7 +123,6 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     if (event.target.name.includes('linkUrl')) {
       values[index].linkUrl = event.target.value;
     }
-    // console.log(values);
     setLinkFields(values);
   };
 
@@ -137,7 +130,6 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     const links = [...dateFields];
     links.splice(index, 1);
     setDateFields(links);
-    // value[index + 'linkUrl'] = '';
   };
 
   const handleAddDateField = () => {
@@ -173,32 +165,6 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     }
     setDateFields(values);
   };
-
-  // const selectOptions = ["Exploration", "Ideate", "Implement"];
-
-  // const updateCreateOption = (text) => {
-  //   const len = selectOptions.length;
-  //   if (selectOptions[len - 1].includes("Create '")) {
-  //     // remove Create option before adding an updated one
-  //     selectOptions.pop();
-  //   }
-  //   selectOptions.push(`Create '${text}'`);
-  // };
-
-  // const getRegExp = text => {
-  //   // The line below escapes regular expression special characters:
-  //   // [ \ ^ $ . | ? * + ( )
-  //   const escapedText = text.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
-
-  //   // Create the regular expression with modified value which
-  //   // handles escaping special characters. Without escaping special
-  //   // characters, errors will appear in the console
-  //   return new RegExp(escapedText, 'i');
-  // };
-
-  // const [options, setOptions] = useState(selectOptions);
-  // const [searchValue, setSearchValue] = useState('');
-  // const [selectValue, setSelectValue] = useState('');
 
   return (
     <Layer position="center" onEsc={onDone}>
@@ -245,6 +211,7 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                       onChange={(event) => handleInputChange(index, event)}
                       name={`${index}linkUrl`}
                       id={`${index}linkUrl`}
+                      value={linkFields[`${index}`].linkUrl}
                       placeholder="URL"
                     />
                   </FormField>
@@ -286,8 +253,6 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                   <FormField
                     name={`${index}DateTarget`}
                     htmlFor={`${index}DateTarget`}
-                    // name="target"
-                    // htmlFor="target"
                     required
                     margin="none"
                   >
@@ -295,8 +260,7 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                       onChange={(event) => handleDateInputChange(index, event)}
                       name={`${index}DateTarget`}
                       htmlFor={`${index}DateTarget`}
-                      // name="target"
-                      // id="target"
+                      value={dateFields[`${index}`].date}
                       format="mm/dd/yyyy"
                       placeholder="Date"
                     />
@@ -314,8 +278,7 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                       htmlFor={`${index}DateStage`}
                       icon={<FormDown />}
                       reverse
-                      // name="label"
-                      // id="label"
+                      value={dateFields[`${index}`].stage}
                       placeholder="Design Stage"
                       suggestions={roadmap.labels.map(({ name }) => name)}
                     />
@@ -334,8 +297,7 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                       reverse
                       name={`${index}DateProgress`}
                       htmlFor={`${index}DateProgress`}
-                      // name="progress"
-                      // id="progress"
+                      value={dateFields[`${index}`].progress}
                       placeholder="Progress"
                       suggestions={['Not Started', 'In Progress', 'Complete']}
                     />

@@ -112,9 +112,6 @@ const Roadmap = ({ identifier, onClose }) => {
   const sections = useMemo(() => {
     let result = [];
     if (roadmap) {
-      // const monthsItems = items.filter(({ target }) =>
-      //   months.some((month) => sameMonth(month, target)),
-      // );
       const monthsItems = items.filter(({ dateFields }) =>
         months.some((month) =>
           dateFields.some((dateField) => sameMonth(month, dateField.date)),
@@ -125,14 +122,11 @@ const Roadmap = ({ identifier, onClose }) => {
           name,
           months: months.map((month) => ({
             month,
-            items: monthsItems.filter(
-              // ({ section, target }) =>
-              //   name === section && sameMonth(month, target),
-              ({ section, dateFields }) =>
-                dateFields.some(
-                  (dateField) =>
-                    name === section && sameMonth(month, dateField.date),
-                ),
+            items: monthsItems.filter(({ section, dateFields }) =>
+              dateFields.some(
+                (dateField) =>
+                  name === section && sameMonth(month, dateField.date),
+              ),
             ),
           })),
         }))
@@ -285,7 +279,6 @@ const Roadmap = ({ identifier, onClose }) => {
             <Row>
               {months.map((month, index) => (
                 <Box
-                  // background="green"
                   key={month}
                   direction="row"
                   align="center"
@@ -322,7 +315,6 @@ const Roadmap = ({ identifier, onClose }) => {
                   <Heading
                     level={3}
                     size="18px"
-                    // color="text-weak"
                     margin={{
                       top: 'small',
                       bottom: 'small',
@@ -339,14 +331,9 @@ const Roadmap = ({ identifier, onClose }) => {
                       gap="medium"
                       pad={{ vertical: 'medium', horizontal: 'small' }}
                       background={
-                        // index%2 === 0 ? 'light-1' : 'light-2'
                         index % 2 === 0
                           ? 'background-contrast'
                           : 'background-back'
-                        // index%2 === 0 ? 'graph-1' : 'graph-2'
-                        // dragging !== undefined && dropTarget !== month
-                        //   ? 'background-contrast'
-                        //   : 'background-back'
                       }
                       responsive={false}
                       onDragEnter={(event) => {
@@ -363,21 +350,7 @@ const Roadmap = ({ identifier, onClose }) => {
                       onDrop={moveItem}
                     >
                       {items.map(
-                        ({
-                          dateFields,
-                          index,
-                          label: labelName,
-                          linkFields,
-                          name,
-                          note,
-                          progress,
-                          target,
-                        }) => {
-                          // console.log(labelName);
-                          // const daysRemaining = Math.round(
-                          //   (new Date(target) - new Date()) /
-                          //     (1000 * 60 * 60 * 24),
-                          // );
+                        ({ dateFields, index, linkFields, name, note }) => {
                           const labels = [];
                           for (var x in dateFields) {
                             const stage = dateFields[x].stage;
@@ -385,22 +358,6 @@ const Roadmap = ({ identifier, onClose }) => {
                               roadmap.labels.find(({ name }) => name === stage),
                             );
                           }
-                          // const label =
-                          //   labelName &&
-                          //   roadmap.labels &&
-                          //   roadmap.labels.find(
-                          //     ({ name }) => name === labelName,
-                          //   );
-                          // const labels = dateFields.some((dateField) => {
-                          //   // dateFields.some((dateField) => sameMonth(month, dateField.date))),
-                          //   // console.log(dateField);
-                          //   dateField.stage && roadmap.labels &&
-                          //   roadmap.labels.find(
-                          //     ({ name }) => name === dateField.stage
-                          //   )
-                          // }
-                          // );
-                          // console.log(labels);
                           let content = (
                             <Card
                               key={name}
@@ -427,11 +384,17 @@ const Roadmap = ({ identifier, onClose }) => {
                                   horizontal: 'medium',
                                 }}
                               >
-                                <Button
-                                  plain
-                                  icon={<More color="border" />}
-                                  onClick={() => setItemIndex(index)}
-                                />
+                                {editing ? (
+                                  <Blank />
+                                ) : (
+                                  <Button
+                                    plain
+                                    icon={<More color="border" />}
+                                    onClick={() =>
+                                      editing ? undefined : setItemIndex(index)
+                                    }
+                                  />
+                                )}
                               </Box>
                               <Box
                                 justify="between"
@@ -453,11 +416,6 @@ const Roadmap = ({ identifier, onClose }) => {
                                   <Heading margin="none" size="small" level={4}>
                                     {name}
                                   </Heading>
-                                  {/* <Text size="small">
-                                    {daysRemaining >= 0
-                                      ? `${daysRemaining} days remaining`
-                                      : `${daysRemaining * -1} days ago`}
-                                  </Text> */}
                                   <Text>{note}</Text>
                                 </CardHeader>
                                 <CardBody
