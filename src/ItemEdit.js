@@ -12,11 +12,11 @@ import {
   TextArea,
   TextInput,
 } from 'grommet';
-import { Close } from 'grommet-icons';
 import { update } from './data';
 import Auth from './Auth';
 import {
   AddCircle,
+  Close,
   Figma,
   FormClose,
   FormDown,
@@ -118,12 +118,10 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     value[index + 'linkUrl'] = '';
   };
 
-  const handleInputChange = (index, event) => {
-    const values = [...linkFields];
-    if (event.target.name.includes('linkUrl')) {
-      values[index].linkUrl = event.target.value;
-    }
-    setLinkFields(values);
+  const handleAddDateField = () => {
+    const links = [...dateFields];
+    links.push({ date: '', stage: '', progress: '' });
+    setDateFields(links);
   };
 
   const handleRemoveDateField = (index) => {
@@ -132,10 +130,12 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     setDateFields(links);
   };
 
-  const handleAddDateField = () => {
-    const links = [...dateFields];
-    links.push({ date: '', stage: '', progress: '' });
-    setDateFields(links);
+  const handleLinkInputChange = (index, event) => {
+    const values = [...linkFields];
+    if (event.target.name.includes('linkUrl')) {
+      values[index].linkUrl = event.target.value;
+    }
+    setLinkFields(values);
   };
 
   const handleDateInputChange = (index, event) => {
@@ -146,7 +146,6 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
 
   const handleSuggestionSelect = (index, event) => {
     const values = [...dateFields];
-
     if (event.target.name && event.target.name.includes('Stage')) {
       values[index].stage = event.suggestion;
     } else if (event.target.name && event.target.name.includes('Progress')) {
@@ -155,9 +154,8 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
     setDateFields(values);
   };
 
-  const handleOtherInputChange = (index, event) => {
+  const handleAdditionalInputChange = (index, event) => {
     const values = [...dateFields];
-
     if (event.target.name && event.target.name.includes('Stage')) {
       values[index].stage = event.target.value;
     } else if (event.target.name && event.target.name.includes('Progress')) {
@@ -208,7 +206,7 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                     htmlFor={`${index}linkUrl`}
                   >
                     <TextInput
-                      onChange={(event) => handleInputChange(index, event)}
+                      onChange={(event) => handleLinkInputChange(index, event)}
                       name={`${index}linkUrl`}
                       id={`${index}linkUrl`}
                       value={linkFields[`${index}`].linkUrl}
@@ -270,7 +268,9 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                     htmlFor={`${index}DateStage`}
                   >
                     <TextInput
-                      onChange={(event) => handleOtherInputChange(index, event)}
+                      onChange={(event) =>
+                        handleAdditionalInputChange(index, event)
+                      }
                       onSuggestionSelect={(event) =>
                         handleSuggestionSelect(index, event)
                       }
@@ -289,7 +289,9 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                     margin="none"
                   >
                     <TextInput
-                      onChange={(event) => handleOtherInputChange(index, event)}
+                      onChange={(event) =>
+                        handleAdditionalInputChange(index, event)
+                      }
                       onSuggestionSelect={(event) =>
                         handleSuggestionSelect(index, event)
                       }

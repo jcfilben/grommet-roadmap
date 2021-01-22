@@ -293,7 +293,7 @@ const Roadmap = ({ identifier, onClose }) => {
                   ) : (
                     <Blank />
                   )}
-                  <Heading level={4} size="large">
+                  <Heading level={2} size="small">
                     {month.toLocaleString(undefined, {
                       month: 'long',
                       year: 'numeric',
