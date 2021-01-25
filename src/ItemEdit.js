@@ -213,24 +213,24 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                       placeholder="URL"
                     />
                   </FormField>
-                  <Box
-                    align="end"
-                    width="40px"
-                    margin={{ horizontal: 'small', vertical: 'xsmall' }}
-                    border="all"
-                    round="4px"
-                  >
-                    <Box align="center" pad="xsmall">
-                      {linkField.linkUrl &&
-                        (linkField.linkUrl.includes('figma.com') ? (
+                  {linkField.linkUrl && (
+                    <Box
+                      align="end"
+                      margin={{ horizontal: 'small', vertical: 'xsmall' }}
+                      border="all"
+                      round="xsmall"
+                    >
+                      <Box align="center" pad="xsmall">
+                        {linkField.linkUrl.includes('figma.com') ? (
                           <Figma color="plain" />
                         ) : linkField.linkUrl.includes('github.com') ? (
                           <Github />
                         ) : (
                           <Link />
-                        ))}
+                        )}
+                      </Box>
                     </Box>
-                  </Box>
+                  )}
                   <Box alignContent="center">
                     <FormClose onClick={() => handleRemoveUrl(index)} />
                   </Box>

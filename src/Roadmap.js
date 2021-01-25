@@ -23,7 +23,6 @@ import {
 } from 'grommet';
 import {
   Add,
-  AddCircle,
   Blank,
   CircleInformation,
   Figma,
@@ -514,16 +513,6 @@ const Roadmap = ({ identifier, onClose }) => {
                             );
                           return content;
                         },
-                      )}
-                      {editing ? (
-                        <Button
-                          icon={<AddCircle pad="small" color="border" />}
-                          onClick={() => setItemIndex(-1)}
-                          secondary
-                          color="border"
-                        />
-                      ) : (
-                        <Blank />
                       )}
                     </Box>
                   ))}
