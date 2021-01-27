@@ -7,6 +7,12 @@ const upgrade = (roadmap) => {
   // add empty items if needed
   if (!roadmap.items) roadmap.items = [];
   // convert type to section
+  roadmap.items.forEach((i) => {
+    if (i.type) {
+      i.section = i.type;
+      delete i.type;
+    }
+  });
   for (let i = 0; i < roadmap.items.length; i++) {
     if (roadmap.items[i].target) {
       var newItem = {
@@ -38,12 +44,6 @@ const upgrade = (roadmap) => {
       roadmap.items[i] = newItem;
     }
   }
-  roadmap.items.forEach((i) => {
-    if (i.type) {
-      i.section = i.type;
-      delete i.type;
-    }
-  });
   // add sections if not there
   if (!roadmap.sections)
     roadmap.sections = Array.from(

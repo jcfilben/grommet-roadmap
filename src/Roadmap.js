@@ -241,7 +241,7 @@ const Roadmap = ({ identifier, onClose }) => {
             <Heading textAlign="center" size="small" margin="none">
               {editing ? (
                 <Button
-                  size="xlarge"
+                  size="large"
                   label={roadmap.name}
                   onClick={() => setEditRoadmap(true)}
                 />
