@@ -7,7 +7,6 @@ const upgrade = (roadmap) => {
   // add empty items if needed
   if (!roadmap.items) roadmap.items = [];
   // convert type to section
-  console.log(roadmap.items);
   roadmap.items.forEach((i) => {
     if (i.type) {
       i.section = i.type;
@@ -22,21 +21,15 @@ const upgrade = (roadmap) => {
         note: '',
         DateTarget0: '',
       };
-      // i.dateFields.push({ date: '', stage: '', progress: '' });
-      console.log(i);
-      newItem.dateFields[0].date = i.target.toISOString();
-      newItem.DateTarget0 = i.target.toISOString();
-      // delete i.target;
-      console.log('in target');
+      newItem.dateFields[0].date = i.target;
+      newItem.DateTarget0 = i.target;
+
       if (i.name) {
         newItem.name = i.name;
       }
       if (i.section) {
         newItem.section = i.section;
       }
-      // if (i.status) {
-      //   newItem.dateFields[0].progress = i.status;
-      // }
       if (i.label) {
         newItem.dateFields[0].stage = i.label;
       }
@@ -46,11 +39,10 @@ const upgrade = (roadmap) => {
       if (i.note) {
         newItem.note = i.note;
       }
-      delete roadmap.items[roadmap.items.indexOf(i)];
+
+      roadmap.items.splice(roadmap.items.indexOf(i), 1);
       roadmap.items.push(newItem);
     }
-
-    console.log('in loop');
   });
   // add sections if not there
   if (!roadmap.sections)
@@ -71,28 +63,6 @@ const upgrade = (roadmap) => {
     );
   // clean up blank labels
   roadmap.labels = roadmap.labels.filter((l) => l.name);
-  console.log(roadmap.items);
-  // roadmap.items.forEach((i) => {
-  //   if (i.target) {
-  //     i.dateFields.push({ date: '', stage: '', progress: '' });
-  //     i.dateFields[0].date = i.target;
-  //     delete i.target;
-  //     console.log('here');
-  //   }
-  //   if (i.status) {
-  //     i.dateFields[0].progress = i.status;
-  //     delete i.status;
-  //   }
-  //   if (i.label) {
-  //     i.dateFields[0].stage = i.label;
-  //     delete i.label;
-  //   }
-  //   if (i.url) {
-  //     i.linkFields.push({ linkUrl: '' });
-  //     i.linkFields[0].linkUrl = i.url;
-  //     delete i.url;
-  //   }
-  // });
 };
 
 const addIdentifier = (roadmap, password) => {

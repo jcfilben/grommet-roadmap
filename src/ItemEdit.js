@@ -46,7 +46,6 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
   );
 
   const submit = (password) => {
-    console.log(value);
     // remove empty link fields
     for (let i = 0; i < linkFields.length; i++) {
       delete value[`${i}linkUrl`];
