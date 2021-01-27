@@ -238,9 +238,10 @@ const Roadmap = ({ identifier, onClose }) => {
         >
           <Header background={{ color: 'background-contrast' }} pad="small">
             <Button icon={<Navigate />} onClick={onClose} />
-            <Heading textAlign="center" size="24px" margin="none">
+            <Heading textAlign="center" size="small" margin="none">
               {editing ? (
                 <Button
+                  size="xlarge"
                   label={roadmap.name}
                   onClick={() => setEditRoadmap(true)}
                 />
@@ -311,15 +312,7 @@ const Roadmap = ({ identifier, onClose }) => {
             {Object.values(sections).map(({ name, months }) => (
               <Box flex={false} key={name || 'none'}>
                 <Row>
-                  <Heading
-                    level={3}
-                    size="18px"
-                    margin={{
-                      top: 'small',
-                      bottom: 'small',
-                      horizontal: 'small',
-                    }}
-                  >
+                  <Heading level={3} size="xsmall" margin="small">
                     {name}
                   </Heading>
                 </Row>
