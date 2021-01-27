@@ -20,10 +20,12 @@ const upgrade = (roadmap) => {
         dateFields: [{ date: '', stage: '', progress: '' }],
         linkFields: [{ linkUrl: '' }],
         note: '',
+        DateTarget0: '',
       };
       // i.dateFields.push({ date: '', stage: '', progress: '' });
       console.log(i);
-      newItem.dateFields[0].date = i.target;
+      newItem.dateFields[0].date = i.target.toISOString();
+      newItem.DateTarget0 = i.target.toISOString();
       // delete i.target;
       console.log('in target');
       if (i.name) {

@@ -250,15 +250,15 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
                   margin={{ bottom: 'small' }}
                 >
                   <FormField
-                    name={`${index}DateTarget`}
-                    htmlFor={`${index}DateTarget`}
+                    name={`DateTarget${index}`}
+                    htmlFor={`DateTarget${index}`}
                     required
                     margin="none"
                   >
                     <DateInput
                       onChange={(event) => handleDateInputChange(index, event)}
-                      name={`${index}DateTarget`}
-                      htmlFor={`${index}DateTarget`}
+                      name={`DateTarget${index}`}
+                      htmlFor={`DateTarget${index}`}
                       value={dateFields[`${index}`].date}
                       format="mm/dd/yyyy"
                       placeholder="Date"

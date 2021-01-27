@@ -178,7 +178,7 @@ const Roadmap = ({ identifier, onClose }) => {
           sameMonth(nextItem.dateFields[x].date, prevTarget.toISOString())
         ) {
           nextItem.dateFields[x].date = dropTarget.toISOString();
-          nextItem[`${x}DateTarget`] = nextItem.dateFields[x].date;
+          nextItem[`DateTarget${x}`] = nextItem.dateFields[x].date;
         }
       }
       event.dataTransfer.clearData();
