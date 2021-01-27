@@ -46,15 +46,16 @@ const ItemEdit = ({ index, roadmap, onChange, onDone }) => {
   );
 
   const submit = (password) => {
+    console.log(value);
     // remove empty link fields
     for (let i = 0; i < linkFields.length; i++) {
-      delete value[`${i}DateProgress`];
-      delete value[`${i}DateStage`];
+      delete value[`${i}linkUrl`];
       if (linkFields[i].linkUrl === '') linkFields.splice(i, 1);
     }
     for (let i = 0; i < dateFields.length; i++) {
-      delete value[`${i}linkUrl`];
-      if (dateFields[i].date === '') linkFields.splice(i, 1);
+      delete value[`${i}DateProgress`];
+      delete value[`${i}DateStage`];
+      if (dateFields[i].date === '') dateFields.splice(i, 1);
     }
     value.linkFields = JSON.parse(JSON.stringify(linkFields));
     value.dateFields = JSON.parse(JSON.stringify(dateFields));

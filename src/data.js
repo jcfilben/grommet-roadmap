@@ -32,6 +32,28 @@ const upgrade = (roadmap) => {
     );
   // clean up blank labels
   roadmap.labels = roadmap.labels.filter((l) => l.name);
+  console.log(roadmap.items);
+  roadmap.items.forEach((i) => {
+    if (i.target) {
+      i.dateFields.push({ date: '', stage: '', progress: '' });
+      i.dateFields[0].date = i.target;
+      delete i.target;
+      console.log('here');
+    }
+    if (i.status) {
+      i.dateFields[0].progress = i.status;
+      delete i.status;
+    }
+    if (i.label) {
+      i.dateFields[0].stage = i.label;
+      delete i.label;
+    }
+    if (i.url) {
+      i.linkFields.push({ linkUrl: '' });
+      i.linkFields[0].linkUrl = i.url;
+      delete i.url;
+    }
+  });
 };
 
 const addIdentifier = (roadmap, password) => {
